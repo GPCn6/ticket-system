@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jsu.mapper.SeckillSessionMapper">
+
+    <select id="selectActiveSessions" resultType="com.jsu.entity.SeckillSession">
+        <![CDATA[
+        SELECT *
+        FROM biz_seckill_session
+        WHERE status = 1
+          AND start_time <= NOW()
+          AND end_time >= NOW()
+        ]]>
+    </select>
+
+    <select id="selectUpcomingSessions" resultType="com.jsu.entity.SeckillSession">
+        <![CDATA[
+        SELECT *
+        FROM biz_seckill_session
+        WHERE status = 1
+          AND start_time > NOW()
+        ORDER BY start_time ASC
+        ]]>
+    </select>
+
+    <select id="selectByShowId" resultType="com.jsu.entity.SeckillSession">
+        SELECT *
+        FROM biz_seckill_session
+        WHERE show_id = #{showId}
+        ORDER BY start_time ASC
+    </select>
+
+    <select id="selectByTicketId" resultType="com.jsu.entity.SeckillSession">
+        SELECT *
+        FROM biz_seckill_session
+        WHERE ticket_id = #{ticketId}
+        ORDER BY start_time ASC
+    </select>
+
+    <select id="selectAll" resultType="com.jsu.entity.SeckillSession">
+        SELECT *
+        FROM biz_seckill_session
+        ORDER BY id ASC
+    </select>
+
+    <update id="deductStock">
+        UPDATE biz_seckill_session
+        SET stock = stock - #{quantity}
+        WHERE id = #{sessionId} AND stock >= #{quantity}
+    </update>
+
+    <update id="restoreStock">
+        UPDATE biz_seckill_session
+        SET stock = stock + #{quantity}
+        WHERE id = #{sessionId}
+    </update>
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jsu.mapper.TicketMapper">
+
+    <select id="selectByShowId" resultType="com.jsu.entity.Ticket">
+        SELECT *
+        FROM biz_ticket
+        WHERE show_id = #{showId}
+        ORDER BY price ASC
+    </select>
+
+    <update id="deductStock">
+        UPDATE biz_ticket
+        SET available_stock = available_stock - #{quantity}
+        WHERE id = #{ticketId}
+          AND available_stock >= #{quantity}
+    </update>
+
+    <update id="restoreStock">
+        UPDATE biz_ticket
+        SET available_stock = available_stock + #{quantity}
+        WHERE id = #{ticketId}
+    </update>
+
+</mapper>

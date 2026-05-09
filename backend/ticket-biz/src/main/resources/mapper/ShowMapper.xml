@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jsu.mapper.ShowMapper">
+
+    <select id="selectByCondition" resultType="com.jsu.entity.Show">
+        SELECT * FROM biz_show
+        <where>
+            <if test="param2.name != null and param2.name != ''">
+                AND name LIKE CONCAT('%', #{param2.name}, '%')
+            </if>
+            <if test="param2.category != null and param2.category != ''">
+                AND category = #{param2.category}
+            </if>
+            <if test="param2.city != null and param2.city != ''">
+                AND city = #{param2.city}
+            </if>
+            <if test="param2.status != null">
+                AND status = #{param2.status}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByCategory" resultType="com.jsu.entity.Show">
+        SELECT *
+        FROM biz_show
+        WHERE category = #{category}
+          AND status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectHotShows" resultType="com.jsu.entity.Show">
+        SELECT *
+        FROM biz_show
+        WHERE status = 1
+        ORDER BY create_time DESC
+            LIMIT #{limit}
+    </select>
+
+    <select id="search" resultType="com.jsu.entity.Show">
+        SELECT *
+        FROM biz_show
+        WHERE status = 1
+          AND (
+            name LIKE CONCAT('%', #{keyword}, '%')
+                OR venue LIKE CONCAT('%', #{keyword}, '%')
+                OR description LIKE CONCAT('%', #{keyword}, '%')
+            )
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

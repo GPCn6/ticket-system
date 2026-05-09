@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jsu.mapper.OrderMapper">
+
+    <select id="selectUserOrders" resultType="com.jsu.entity.Order">
+        SELECT o.*,
+        s.name as showName,
+        t.name as ticketName,
+        u.username as userName
+        FROM biz_order o
+        LEFT JOIN biz_show s ON o.show_id = s.id
+        LEFT JOIN biz_ticket t ON o.ticket_id = t.id
+        LEFT JOIN sys_user u ON o.user_id = u.id
+        WHERE o.user_id = #{userId}
+        <if test="status != null">
+            AND o.status = #{status}
+        </if>
+        ORDER BY o.pay_time DESC, o.create_time DESC
+    </select>
+
+    <select id="selectByOrderNo" resultType="com.jsu.entity.Order">
+        SELECT o.*,
+               s.name as showName,
+               t.name as ticketName,
+               u.username as userName
+        FROM biz_order o
+                 LEFT JOIN biz_show s ON o.show_id = s.id
+                 LEFT JOIN biz_ticket t ON o.ticket_id = t.id
+                 LEFT JOIN sys_user u ON o.user_id = u.id
+        WHERE o.order_no = #{orderNo}
+    </select>
+
+    <select id="selectExpiredOrders" resultType="com.jsu.entity.Order">
+        <![CDATA[
+        SELECT o.*,
+               s.name as showName,
+               t.name as ticketName,
+               u.username as userName
+        FROM biz_order o
+                 LEFT JOIN biz_show s ON o.show_id = s.id
+                 LEFT JOIN biz_ticket t ON o.ticket_id = t.id
+                 LEFT JOIN sys_user u ON o.user_id = u.id
+        WHERE o.status = 0
+          AND o.expire_time < NOW()
+        ORDER BY o.create_time ASC
+        ]]>
+    </select>
+
+    <select id="selectUserShowOrders" resultType="com.jsu.entity.Order">
+        SELECT o.*,
+               s.name as showName,
+               t.name as ticketName,
+               u.username as userName
+        FROM biz_order o
+                 LEFT JOIN biz_show s ON o.show_id = s.id
+                 LEFT JOIN biz_ticket t ON o.ticket_id = t.id
+                 LEFT JOIN sys_user u ON o.user_id = u.id
+        WHERE o.user_id = #{userId}
+          AND o.show_id = #{showId}
+          AND o.status IN (1, 4)
+        ORDER BY o.pay_time DESC, o.create_time DESC
+    </select>
+
+    <select id="selectAllOrders" resultType="com.jsu.entity.Order">
+        SELECT o.*,
+               s.name as showName,
+               t.name as ticketName,
+               u.username as userName
+        FROM biz_order o
+                 LEFT JOIN biz_show s ON o.show_id = s.id
+                 LEFT JOIN biz_ticket t ON o.ticket_id = t.id
+                 LEFT JOIN sys_user u ON o.user_id = u.id
+        <where>
+            <if test="status != null">
+                AND o.status = #{status}
+            </if>
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+</mapper>

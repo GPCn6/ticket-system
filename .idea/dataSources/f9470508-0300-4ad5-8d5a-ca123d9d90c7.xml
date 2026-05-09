@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="0@localhost">
+  <database-model serializer="dbm" dbms="REDIS" family-id="REDIS" format-version="4.54">
+    <root id="1">
+      <ServerVersion>5.0.14.1</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="0">
+      <Current>1</Current>
+    </schema>
+    <schema id="3" parent="1" name="1"/>
+    <schema id="4" parent="1" name="10"/>
+    <schema id="5" parent="1" name="11"/>
+    <schema id="6" parent="1" name="12"/>
+    <schema id="7" parent="1" name="13"/>
+    <schema id="8" parent="1" name="14"/>
+    <schema id="9" parent="1" name="15"/>
+    <schema id="10" parent="1" name="2"/>
+    <schema id="11" parent="1" name="3"/>
+    <schema id="12" parent="1" name="4"/>
+    <schema id="13" parent="1" name="5"/>
+    <schema id="14" parent="1" name="6"/>
+    <schema id="15" parent="1" name="7"/>
+    <schema id="16" parent="1" name="8"/>
+    <schema id="17" parent="1" name="9"/>
+    <redis-key id="18" parent="2" name="coupon:stock:1"/>
+    <redis-key id="19" parent="2" name="coupon:users:1"/>
+    <redis-key id="20" parent="2" name="seckill:limit:5:1"/>
+    <redis-key id="21" parent="2" name="seckill:stock:5"/>
+    <redis-key id="22" parent="2" name="seckill:warmup:5"/>
+    <redis-key id="23" parent="2" name="ticket:stock:1"/>
+    <redis-key id="24" parent="2" name="ticket:stock:2"/>
+    <redis-key id="25" parent="2" name="ticket:stock:3"/>
+    <redis-key id="26" parent="2" name="��&#xffef;￠&#x5;t&#xffef;￠&#xe;coupon:stock:1"/>
+  </database-model>
+</dataSource>
