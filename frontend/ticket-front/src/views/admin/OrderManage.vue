@@ -1,7 +1,13 @@
 <template>
   <div class="order-manage">
     <div class="page-header">
-      <h2>订单管理</h2>
+      <div class="header-left">
+        <el-button @click="goBack">
+          <el-icon><ArrowLeft /></el-icon>
+          返回
+        </el-button>
+        <h2>订单管理</h2>
+      </div>
       <el-button type="danger" @click="handleResetAll" :loading="resetting">重置全部数据</el-button>
     </div>
 
@@ -134,8 +140,12 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { ArrowLeft } from '@element-plus/icons-vue';
 import { orderApi } from '../../api/order';
+
+const router = useRouter();
 
 const loading = ref(false);
 const tableData = ref([]);
@@ -268,6 +278,10 @@ const handleResetAll = async () => {
   }
 };
 
+const goBack = () => {
+  router.push('/admin');
+};
+
 onMounted(() => {
   loadData();
 });
@@ -283,6 +297,12 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .page-header h2 {

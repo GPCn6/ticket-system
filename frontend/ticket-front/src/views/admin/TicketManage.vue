@@ -145,7 +145,7 @@ const onShowChange = (showId) => {
 };
 
 const goBack = () => {
-  router.push('/admin/shows');
+  router.push('/admin');
 };
 
 const handleCreate = () => {

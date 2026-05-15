@@ -1,7 +1,13 @@
 <template>
   <div class="show-manage">
     <div class="page-header">
-      <h2>演出管理</h2>
+      <div class="header-left">
+        <el-button @click="goBack">
+          <el-icon><ArrowLeft /></el-icon>
+          返回
+        </el-button>
+        <h2>演出管理</h2>
+      </div>
       <el-button type="primary" @click="handleCreate">
         <el-icon><Plus /></el-icon>
         添加演出
@@ -137,9 +143,12 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
+import { Plus, ArrowLeft } from '@element-plus/icons-vue';
 import { showApi } from '../../api/show';
+
+const router = useRouter();
 
 const loading = ref(false);
 const tableData = ref([]);
@@ -299,6 +308,10 @@ const handleSubmit = async () => {
   }
 };
 
+const goBack = () => {
+  router.push('/admin');
+};
+
 onMounted(() => {
   loadData();
 });
@@ -314,6 +327,12 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .page-header h2 {
