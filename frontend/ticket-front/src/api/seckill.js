@@ -7,6 +7,9 @@ export const seckillApi = {
   warmUpStock(sessionId) {
     return http.post(`/seckill/warmup/${sessionId}`);
   },
+  batchWarmUp() {
+    return http.post('/seckill/warmup/batch');
+  },
   getActiveSessions() {
     return http.get('/seckill/active');
   },

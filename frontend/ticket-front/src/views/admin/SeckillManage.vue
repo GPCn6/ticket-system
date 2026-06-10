@@ -8,13 +8,18 @@
         </el-button>
         <h2>秒杀场次管理</h2>
       </div>
-      <el-button type="primary" @click="handleCreate">
-        <el-icon><Plus /></el-icon>
-        添加秒杀场次
-      </el-button>
+      <div class="header-actions">
+        <el-button type="warning" @click="handleBatchWarmup" :loading="warmingUp">
+          <el-icon><Lightning /></el-icon>
+          批量预热
+        </el-button>
+        <el-button type="primary" @click="handleCreate">
+          <el-icon><Plus /></el-icon>
+          添加秒杀场次
+        </el-button>
+      </div>
     </div>
 
-    <!-- 数据表格 -->
     <el-card>
       <el-table :data="tableData" v-loading="loading" stripe>
         <el-table-column prop="id" label="ID" width="80" />
@@ -23,17 +28,23 @@
             <div>
               <div style="font-weight: 600;">{{ row.show?.name || '-' }}</div>
               <div style="font-size: 12px; color: #909399; margin-top: 2px;">
-                {{ row.ticket ? `${row.ticket.name} (¥${row.ticket.price})` : '-' }}
+                {{ row.ticket ? `${row.ticket.name} (￥${row.ticket.price})` : '-' }}
               </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="seckillPrice" label="秒杀价" width="100">
           <template #default="{ row }">
-            <span class="price">¥{{ row.seckillPrice }}</span>
+            <span class="price">￥{{ row.seckillPrice }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="stock" label="库存" width="100" />
+        <el-table-column prop="stock" label="实时库存" width="100">
+          <template #default="{ row }">
+            <span :class="{ 'stock-warn': row.stock != null && row.stock <= 10 }">
+              {{ row.stock ?? '-' }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="startTime" label="开始时间" width="170">
           <template #default="{ row }">
             {{ formatDateTime(row.startTime) }}
@@ -44,24 +55,36 @@
             {{ formatDateTime(row.endTime) }}
           </template>
         </el-table-column>
+        <el-table-column label="预热状态" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag :type="row.warmedUp ? 'success' : 'info'" size="small">
+              {{ row.warmedUp ? '已预热' : '未预热' }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row)">
+            <el-tag :type="getStatusType(row)" size="small">
               {{ getStatusText(row) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button type="warning" link size="small" @click="handleWarmup(row)">预热</el-button>
+            <el-button
+              type="warning" link size="small"
+              @click="handleWarmup(row)"
+              :disabled="row.warmedUp"
+            >
+              {{ row.warmedUp ? '已预热' : '预热' }}
+            </el-button>
             <el-button type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <!-- 编辑对话框 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px" destroy-on-close>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="关联演出" prop="showId">
@@ -79,7 +102,7 @@
             <el-option
               v-for="ticket in ticketList"
               :key="ticket.id"
-              :label="`${ticket.name} (¥${ticket.price})`"
+              :label="`${ticket.name} (￥${ticket.price})`"
               :value="ticket.id"
             />
           </el-select>
@@ -125,16 +148,18 @@
 
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue';
+import dayjs from 'dayjs';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, ArrowLeft } from '@element-plus/icons-vue';
+import { Plus, ArrowLeft, Lightning } from '@element-plus/icons-vue';
 import { seckillApi } from '../../api/seckill';
-
-const router = useRouter();
 import { showApi } from '../../api/show';
 import { ticketApi } from '../../api/ticket';
 
+const router = useRouter();
+
 const loading = ref(false);
+const warmingUp = ref(false);
 const tableData = ref([]);
 const showList = ref([]);
 const ticketList = ref([]);
@@ -164,7 +189,6 @@ const rules = {
   endTime: [{ required: true, message: '请选择结束时间', trigger: 'change' }]
 };
 
-// 监听演出变化，加载对应的票档
 watch(() => form.showId, async (newShowId) => {
   if (newShowId) {
     try {
@@ -183,25 +207,9 @@ watch(() => form.showId, async (newShowId) => {
 
 const formatDateTime = (date) => {
   if (!date) return '-';
-  return new Date(date).format('yyyy-MM-dd hh:mm');
+  return dayjs(date).format('YYYY-MM-DD HH:mm');
 };
 
-Date.prototype.format = function(fmt) {
-  var o = {
-    'y+': this.getFullYear(),
-    'M+': this.getMonth() + 1,
-    'd+': this.getDate(),
-    'h+': this.getHours(),
-    'm+': this.getMinutes(),
-    's+': this.getSeconds()
-  };
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, o[k].toString().padStart(RegExp.$1.length, '0'));
-    }
-  }
-  return fmt;
-};
 
 const getStatusType = (row) => {
   if (row.status === 0) return 'info';
@@ -273,7 +281,6 @@ const handleEdit = async (row) => {
     endTime: row.endTime,
     status: row.status
   });
-  // 加载票档列表
   if (row.showId) {
     try {
       const res = await ticketApi.getByShowId(row.showId);
@@ -291,12 +298,36 @@ const handleWarmup = async (row) => {
   try {
     const res = await seckillApi.warmUpStock(row.id);
     if (res.code === 200) {
-      ElMessage.success('预热成功');
+      const warmedStock = res.data?.stock ?? '?';
+      ElMessage.success(`预热成功，库存: ${warmedStock}`);
+      loadData(); // 刷新表格显示预热状态
     } else {
       ElMessage.error(res.message || '预热失败');
     }
   } catch (error) {
     ElMessage.error('预热失败');
+  }
+};
+
+const handleBatchWarmup = async () => {
+  warmingUp.value = true;
+  try {
+    const res = await seckillApi.batchWarmUp();
+    if (res.code === 200) {
+      const count = res.data?.warmedCount ?? 0;
+      if (count > 0) {
+        ElMessage.success(`批量预热完成，共成功 ${count} 场`);
+      } else {
+        ElMessage.info('没有即将开始的场次需要预热');
+      }
+      loadData();
+    } else {
+      ElMessage.error(res.message || '批量预热失败');
+    }
+  } catch (error) {
+    ElMessage.error('批量预热失败');
+  } finally {
+    warmingUp.value = false;
   }
 };
 
@@ -324,7 +355,6 @@ const handleSubmit = async () => {
 
   submitting.value = true;
   try {
-    // 构造提交数据，移除 name 字段（由后端自动获取演出名称）
     const submitData = {
       id: form.id,
       showId: form.showId,
@@ -378,6 +408,12 @@ onMounted(() => {
   gap: 16px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .page-header h2 {
   margin: 0;
   font-size: 20px;
@@ -388,4 +424,12 @@ onMounted(() => {
   color: #ff4d4f;
   font-weight: 600;
 }
+
+.stock-warn {
+  color: #e6a23c;
+  font-weight: 600;
+}
 </style>
+
+
+

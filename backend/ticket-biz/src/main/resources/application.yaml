@@ -1,5 +1,5 @@
-server:
-  port: 8082
+﻿server:
+  port: ${SERVER_PORT:8082}
 
 spring:
   application:
@@ -7,30 +7,36 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: root
-    password: 1234
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:1234}
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
       database: 0
 
   redisson:
-    address: redis://localhost:6379
+    address: redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
     database: 0
 
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
     virtual-host: /
     listener:
       simple:
         acknowledge-mode: manual
         prefetch: 10
+        retry:
+          enabled: true
+          initial-interval: 3000
+          max-attempts: 3
+          multiplier: 2
+          max-interval: 30000
 
 mybatis-plus:
   configuration:
@@ -39,4 +45,4 @@ mybatis-plus:
 
 logging:
   level:
-    com.jsu: debug
+    com.jsu: ${LOG_LEVEL:debug}

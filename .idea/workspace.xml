@@ -4,14 +4,92 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fae41696-325c-4de7-b8c3-6de69a6af8c1" name="更改" comment="" />
+    <list default="true" id="fae41696-325c-4de7-b8c3-6de69a6af8c1" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/src/main/java/com/jsu/service/Impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/src/main/java/com/jsu/service/Impl/OrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/src/main/java/com/jsu/service/Impl/SeckillServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/src/main/java/com/jsu/service/Impl/SeckillServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/TickerBizApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/TickerBizApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/BizJacksonCustomizerConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/BizJacksonCustomizerConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/DatabaseInitializer.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/DatabaseInitializer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/MyBatisPlusConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/MyBatisPlusConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/MyMetaObjectHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/config/MyMetaObjectHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/DataResetController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/DataResetController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/OrderController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/OrderController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/SeckillController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/SeckillController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/ShowController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/ShowController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/TicketController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/controller/TicketController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/dto/PayOrderRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/dto/PayOrderRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/dto/SeckillExecuteRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/dto/SeckillExecuteRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Order.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Order.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Seat.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Seat.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/SeckillSession.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/SeckillSession.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Show.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Show.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Ticket.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/entity/Ticket.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/OrderMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/OrderMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/SeckillSessionMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/SeckillSessionMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/ShowMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/ShowMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/TicketMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mapper/TicketMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/consumer/MessageConsumer.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/consumer/MessageConsumer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/producer/MessageProducer$StockDeductMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/producer/MessageProducer$StockDeductMessage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/producer/MessageProducer$StockRestoreMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/producer/MessageProducer$StockRestoreMessage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/producer/MessageProducer.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/mq/producer/MessageProducer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/OrderServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/OrderServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/SeckillServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/SeckillServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/ShowServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/ShowServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/TicketServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/Impl/TicketServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/OrderService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/OrderService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/SeckillService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/SeckillService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/ShowService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/ShowService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/TicketService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/service/TicketService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/task/OrderCancelScheduler.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-biz/target/classes/com/jsu/task/OrderCancelScheduler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/JacksonConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/JacksonConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/JacksonCustomizerConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/JacksonCustomizerConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/RabbitMQConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/RabbitMQConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/RedisConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/RedisConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/SwaggerConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/SwaggerConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/config/WebConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/constant/OrderStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/constant/OrderStatus.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/constant/RedisKey.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/constant/RedisKey.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/constant/ShowStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/constant/ShowStatus.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/entity/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/BaseException.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/BaseException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/BusinessException.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/BusinessException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/ErrorCode.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/ErrorCode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/GlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/exception/GlobalExceptionHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/filter/CorsFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/filter/CorsFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/result/PageResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/result/PageResult.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/result/Result.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/result/Result.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/result/ResultCode.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/result/ResultCode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/DateUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/DateUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/IdUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/IdUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/IpUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/IpUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/StringUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/util/StringUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/web/ResultResponseAdvice.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-common/target/classes/com/jsu/common/web/ResultResponseAdvice.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/TicketGatewayApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/TicketGatewayApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/config/GatewayConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/config/GatewayConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/config/RedisConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/config/RedisConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/filter/AuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/filter/AuthFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/filter/RateLimitFilter$Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/filter/RateLimitFilter$Config.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/filter/RateLimitFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-gateway/target/classes/com/jsu/filter/RateLimitFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/src/main/java/com/jsu/service/Impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/src/main/java/com/jsu/service/Impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/TicketUserApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/TicketUserApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/config/JackSonConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/config/JackSonConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/config/UserWebSecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/config/UserWebSecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/controller/UserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/dto/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/dto/LoginRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/dto/ResetPasswordRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/dto/ResetPasswordRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/mapper/UserMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/mapper/UserMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/service/Impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/service/Impl/UserServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/service/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ticket-user/target/classes/com/jsu/service/UserService.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="98" />
+    <option name="cachedIndexableFilesCount" value="105" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -25,6 +103,21 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;GPCn6&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/GPCn6/ticket-system.git&quot;,
+    &quot;accountId&quot;: &quot;7b2b47e7-ac51-440e-b10e-105826bad504&quot;
+  }
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$PROJECT_DIR$/../../../downed/apache-maven-3.9.14-bin/apache-maven-3.9.14/mvn_repo/org/apache/tomcat/embed/tomcat-embed-core/10.1.17/tomcat-embed-core-10.1.17.jar!/jakarta/servlet/http/HttpServletRequest.class" root0="SKIP_INSPECTION" />
   </component>
@@ -56,51 +149,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Maven.ticket-system [clean].executor": "Run",
-    "Maven.ticket-system [compile].executor": "Run",
-    "Maven.ticket-system [validate].executor": "Run",
-    "Maven.ticket-user [clean].executor": "Run",
-    "Maven.ticket-user [compile].executor": "Run",
-    "Maven.ticket-user [package].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.BackendApplication.executor": "Run",
-    "Spring Boot.TickerBizApplication.executor": "Run",
-    "Spring Boot.TicketCommonApplication.executor": "Run",
-    "Spring Boot.TicketUserApplication.executor": "Run",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/idea-java/jsu-java/ticket-system/backend/ticket-user",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "模块",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.52988505",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.ticket-system [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ticket-system [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ticket-system [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ticket-user [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ticket-user [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ticket-user [package].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.BackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.TickerBizApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.TicketCommonApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.TicketUserApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/idea-java/jsu-java/ticket-system/backend/ticket-user&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.52988505&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "redis",
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;redis&quot;,
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\idea-java\jsu-java\ticket-system\backend\ticket-user" />
@@ -222,6 +317,10 @@
       <workItem from="1778141496727" duration="142000" />
       <workItem from="1778141652444" duration="451000" />
       <workItem from="1778158007770" duration="2206000" />
+      <workItem from="1779977303320" duration="5486000" />
+      <workItem from="1780148073273" duration="15495000" />
+      <workItem from="1780366064374" duration="13004000" />
+      <workItem from="1780450331916" duration="1246000" />
     </task>
     <servers />
   </component>

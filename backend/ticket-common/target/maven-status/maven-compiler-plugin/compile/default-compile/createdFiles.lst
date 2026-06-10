@@ -16,7 +16,6 @@ com\jsu\common\exception\BusinessException.class
 com\jsu\common\exception\GlobalExceptionHandler.class
 com\jsu\common\util\IdUtils.class
 com\jsu\common\util\IpUtils.class
-com\jsu\common\exception\ErrorCode.class
 com\jsu\common\web\ResultResponseAdvice.class
 com\jsu\common\result\PageResult.class
 com\jsu\common\util\StringUtils.class

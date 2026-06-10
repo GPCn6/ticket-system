@@ -1,3 +1,6 @@
+﻿jwt:
+  secret: ${JWT_SECRET:TicketSystemSecretKey2026ForJWTTokenGeneration}
+
 server:
   port: 8080
 

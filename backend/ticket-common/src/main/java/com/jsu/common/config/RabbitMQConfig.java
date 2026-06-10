@@ -9,114 +9,155 @@ import org.springframework.context.annotation.Configuration;
 /**
  * RabbitMQ 消息队列配置
  *
- * 消息模型：Topic Exchange（主题交换机）
- * 功能：秒杀成功后异步创建订单、同步库存
+ * 企业级特性：
+ * - Topic Exchange（主题交换机）
+ * - 死信队列（DLQ）：消费失败的消息自动路由到 DLQ，防止消息丢失
+ * - 每个处理队列绑定对应的死信队列
  *
  * 消息流向：
- * ┌─────────────────────────────────────────────────────┐
- * │                ticket.exchange（Topic）              │
- * │   order.create → order.create.queue（订单创建）       │
- * │   order.cancel  → order.cancel.queue（订单取消）     │
- * │   stock.deduct  → stock.deduct.queue（库存扣减）     │
- * │   stock.restore → stock.restore.queue（库存恢复）    │
- * └─────────────────────────────────────────────────────┘
- *
- * @Configuration Spring配置类注解
+ *   ticket.exchange (Topic)
+ *     ├─ order.create  → order.create.queue     + order.create.dlq（死信）
+ *     ├─ order.cancel  → order.cancel.queue     + order.cancel.dlq
+ *     ├─ stock.deduct  → stock.deduct.queue     + stock.deduct.dlq
+ *     └─ stock.restore → stock.restore.queue    + stock.restore.dlq
  */
 @Configuration
 public class RabbitMQConfig {
 
-    // ==================== 交换机 ====================
-    /** 票务系统主题交换机 */
     public static final String TICKET_EXCHANGE = "ticket.exchange";
+    public static final String DLX_EXCHANGE = "ticket.dlx";
 
-    // ==================== 队列名 ====================
-    /** 订单创建队列：秒杀成功后异步创建正式订单 */
+    // 处理队列
     public static final String ORDER_CREATE_QUEUE = "order.create.queue";
-    /** 订单取消队列：取消订单时恢复库存 */
     public static final String ORDER_CANCEL_QUEUE = "order.cancel.queue";
-    /** 库存扣减队列：同步Redis库存到数据库 */
     public static final String STOCK_DEDUCT_QUEUE = "stock.deduct.queue";
-    /** 库存恢复队列：订单取消时恢复库存到数据库和Redis */
     public static final String STOCK_RESTORE_QUEUE = "stock.restore.queue";
 
-    // ==================== 路由键 ====================
-    /** 订单创建路由键 */
+    // 死信队列
+    public static final String ORDER_CREATE_DLQ = "order.create.dlq";
+    public static final String ORDER_CANCEL_DLQ = "order.cancel.dlq";
+    public static final String STOCK_DEDUCT_DLQ = "stock.deduct.dlq";
+    public static final String STOCK_RESTORE_DLQ = "stock.restore.dlq";
+
     public static final String ORDER_CREATE_KEY = "order.create";
-    /** 订单取消路由键 */
     public static final String ORDER_CANCEL_KEY = "order.cancel";
-    /** 库存扣减路由键 */
     public static final String STOCK_DEDUCT_KEY = "stock.deduct";
-    /** 库存恢复路由键 */
     public static final String STOCK_RESTORE_KEY = "stock.restore";
 
-    /**
-     * JSON消息转换器
-     * 将Java对象序列化为JSON格式进行消息传输
-     */
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    /**
-     * 主题交换机（topic）
-     * 支持路由键匹配，将消息路由到绑定的队列
-     */
+    // ==================== 正常交换机 ====================
+
     @Bean
     public TopicExchange ticketExchange() {
-        // name: 交换机名称, durable: 持久化, autoDelete: 不自动删除
         return new TopicExchange(TICKET_EXCHANGE, true, false);
     }
 
+    // ==================== 死信交换机 ====================
+
+    @Bean
+    public TopicExchange dlxExchange() {
+        return new TopicExchange(DLX_EXCHANGE, true, false);
+    }
+
+    /**
+     * 构建队列（含死信配置）
+     */
+    private Queue durableQueue(String name, String routingKey) {
+        return QueueBuilder.durable(name)
+                .deadLetterExchange(DLX_EXCHANGE)
+                .deadLetterRoutingKey(routingKey + ".dead")
+                .build();
+    }
+
+    private Queue durableDlq(String name) {
+        return QueueBuilder.durable(name).build();
+    }
+
+    // ==================== 正常队列 + 绑定 ====================
+
     @Bean
     public Queue orderCreateQueue() {
-        return QueueBuilder.durable(ORDER_CREATE_QUEUE).build();
+        return durableQueue(ORDER_CREATE_QUEUE, ORDER_CREATE_KEY);
     }
 
     @Bean
     public Queue orderCancelQueue() {
-        return QueueBuilder.durable(ORDER_CANCEL_QUEUE).build();
+        return durableQueue(ORDER_CANCEL_QUEUE, ORDER_CANCEL_KEY);
     }
 
     @Bean
     public Queue stockDeductQueue() {
-        return QueueBuilder.durable(STOCK_DEDUCT_QUEUE).build();
+        return durableQueue(STOCK_DEDUCT_QUEUE, STOCK_DEDUCT_KEY);
     }
 
     @Bean
     public Queue stockRestoreQueue() {
-        return QueueBuilder.durable(STOCK_RESTORE_QUEUE).build();
+        return durableQueue(STOCK_RESTORE_QUEUE, STOCK_RESTORE_KEY);
     }
 
-    /**
-     * 将队列绑定到交换机，使用对应的路由键
-     */
     @Bean
     public Binding orderCreateBinding() {
-        return BindingBuilder.bind(orderCreateQueue())
-                .to(ticketExchange())
-                .with(ORDER_CREATE_KEY);
+        return BindingBuilder.bind(orderCreateQueue()).to(ticketExchange()).with(ORDER_CREATE_KEY);
     }
 
     @Bean
     public Binding orderCancelBinding() {
-        return BindingBuilder.bind(orderCancelQueue())
-                .to(ticketExchange())
-                .with(ORDER_CANCEL_KEY);
+        return BindingBuilder.bind(orderCancelQueue()).to(ticketExchange()).with(ORDER_CANCEL_KEY);
     }
 
     @Bean
     public Binding stockDeductBinding() {
-        return BindingBuilder.bind(stockDeductQueue())
-                .to(ticketExchange())
-                .with(STOCK_DEDUCT_KEY);
+        return BindingBuilder.bind(stockDeductQueue()).to(ticketExchange()).with(STOCK_DEDUCT_KEY);
     }
 
     @Bean
     public Binding stockRestoreBinding() {
-        return BindingBuilder.bind(stockRestoreQueue())
-                .to(ticketExchange())
-                .with(STOCK_RESTORE_KEY);
+        return BindingBuilder.bind(stockRestoreQueue()).to(ticketExchange()).with(STOCK_RESTORE_KEY);
+    }
+
+    // ==================== 死信队列 + 绑定 ====================
+
+    @Bean
+    public Queue orderCreateDlq() {
+        return durableDlq(ORDER_CREATE_DLQ);
+    }
+
+    @Bean
+    public Queue orderCancelDlq() {
+        return durableDlq(ORDER_CANCEL_DLQ);
+    }
+
+    @Bean
+    public Queue stockDeductDlq() {
+        return durableDlq(STOCK_DEDUCT_DLQ);
+    }
+
+    @Bean
+    public Queue stockRestoreDlq() {
+        return durableDlq(STOCK_RESTORE_DLQ);
+    }
+
+    @Bean
+    public Binding orderCreateDlqBinding() {
+        return BindingBuilder.bind(orderCreateDlq()).to(dlxExchange()).with(ORDER_CREATE_KEY + ".dead");
+    }
+
+    @Bean
+    public Binding orderCancelDlqBinding() {
+        return BindingBuilder.bind(orderCancelDlq()).to(dlxExchange()).with(ORDER_CANCEL_KEY + ".dead");
+    }
+
+    @Bean
+    public Binding stockDeductDlqBinding() {
+        return BindingBuilder.bind(stockDeductDlq()).to(dlxExchange()).with(STOCK_DEDUCT_KEY + ".dead");
+    }
+
+    @Bean
+    public Binding stockRestoreDlqBinding() {
+        return BindingBuilder.bind(stockRestoreDlq()).to(dlxExchange()).with(STOCK_RESTORE_KEY + ".dead");
     }
 }

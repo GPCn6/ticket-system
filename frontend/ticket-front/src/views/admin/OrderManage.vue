@@ -140,6 +140,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import dayjs from 'dayjs';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowLeft } from '@element-plus/icons-vue';
@@ -182,25 +183,10 @@ const getStatusText = (status) => {
 
 const formatDateTime = (date) => {
   if (!date) return '-';
-  return new Date(date).format('yyyy-MM-dd hh:mm:ss');
+  return dayjs(date).format('YYYY-MM-DD HH:mm');
 };
 
-Date.prototype.format = function(fmt) {
-  var o = {
-    'y+': this.getFullYear(),
-    'M+': this.getMonth() + 1,
-    'd+': this.getDate(),
-    'h+': this.getHours(),
-    'm+': this.getMinutes(),
-    's+': this.getSeconds()
-  };
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, o[k].toString().padStart(RegExp.$1.length, '0'));
-    }
-  }
-  return fmt;
-};
+
 
 const loadData = async () => {
   loading.value = true;
@@ -252,6 +238,10 @@ const handleDetail = async (row) => {
   }
 };
 
+const goBack = () => {
+  router.push('/admin');
+};
+
 const handleResetAll = async () => {
   try {
     await ElMessageBox.confirm(
@@ -276,10 +266,6 @@ const handleResetAll = async () => {
   } finally {
     resetting.value = false;
   }
-};
-
-const goBack = () => {
-  router.push('/admin');
 };
 
 onMounted(() => {

@@ -1,5 +1,5 @@
-server:
-  port: 8081
+﻿server:
+  port: ${SERVER_PORT:8081}
 
 spring:
   application:
@@ -7,18 +7,18 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: root
-    password: 1234
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:1234}
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
       database: 0
 
   redisson:
-    address: redis://localhost:6379
+    address: redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
     database: 0
 
 mybatis-plus:
@@ -28,9 +28,9 @@ mybatis-plus:
   mapper-locations: classpath*:/UserMapper.xml
 
 jwt:
-  secret: TicketSystemSecretKey2026ForJWTTokenGeneration
-  expiration: 7200000
+  secret: ${JWT_SECRET:TicketSystemSecretKey2026ForJWTTokenGeneration}
+  expiration: ${JWT_EXPIRATION:7200000}
 
 logging:
   level:
-    com.ticket: debug
+    com.ticket: ${LOG_LEVEL:debug}

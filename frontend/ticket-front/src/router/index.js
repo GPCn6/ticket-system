@@ -71,7 +71,6 @@ const routes = [
     component: () => import('../views/home/Category.vue'),
     meta: { title: '分类列表' }
   },
-  // 管理后台路由
   {
     path: '/admin',
     name: 'AdminDashboard',
@@ -109,16 +108,28 @@ const router = createRouter({
   routes
 });
 
-// 路由守卫
+// getUserInfo Promise 缓存，防止路由切换时多次并发调用
+let userInfoPromise = null;
+
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title ? `${to.meta.title} - Ticket+` : 'Ticket+';
+  document.title = to.meta.title ? to.meta.title + ' - Ticket+' : 'Ticket+';
 
   const userStore = useUserStore();
 
+  // 未登录但需要认证 → 跳转登录
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     next({ name: 'Login', query: { redirect: to.fullPath } });
-  } else if (to.meta.requiresAuth && !userStore.userInfo) {
-    userStore.getUserInfo().then(() => {
+    return;
+  }
+
+  // 已登录但没有 userInfo（刚刷新）→ 异步获取
+  if (to.meta.requiresAuth && !userStore.userInfo) {
+    if (!userInfoPromise) {
+      userInfoPromise = userStore.getUserInfo().finally(() => {
+        userInfoPromise = null;
+      });
+    }
+    userInfoPromise.then(() => {
       if (to.meta.isAdmin && !userStore.isAdmin) {
         next({ name: 'Home' });
         return;
@@ -127,13 +138,22 @@ router.beforeEach((to, from, next) => {
     }).catch(() => {
       next({ name: 'Login', query: { redirect: to.fullPath } });
     });
-  } else if (to.meta.isAdmin && !userStore.isAdmin) {
-    next({ name: 'Home' });
-  } else if (to.meta.guest && userStore.isLoggedIn) {
-    next({ name: 'Home' });
-  } else {
-    next();
+    return;
   }
+
+  // 需要管理员角色但不是 → 跳首页
+  if (to.meta.isAdmin && !userStore.isAdmin) {
+    next({ name: 'Home' });
+    return;
+  }
+
+  // 已登录用户访问登录/注册页 → 跳首页
+  if (to.meta.guest && userStore.isLoggedIn) {
+    next({ name: 'Home' });
+    return;
+  }
+
+  next();
 });
 
 export default router;

@@ -143,6 +143,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import dayjs from 'dayjs';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, ArrowLeft } from '@element-plus/icons-vue';
@@ -192,26 +193,10 @@ const rules = {
 
 const formatDateTime = (date) => {
   if (!date) return '-';
-  return new Date(date).format('yyyy-MM-dd hh:mm');
+  return dayjs(date).format('YYYY-MM-DD HH:mm');
 };
 
-// 格式化日期
-Date.prototype.format = function(fmt) {
-  var o = {
-    'y+': this.getFullYear(),
-    'M+': this.getMonth() + 1,
-    'd+': this.getDate(),
-    'h+': this.getHours(),
-    'm+': this.getMinutes(),
-    's+': this.getSeconds()
-  };
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, o[k].toString().padStart(RegExp.$1.length, '0'));
-    }
-  }
-  return fmt;
-};
+
 
 const loadData = async () => {
   loading.value = true;
@@ -269,6 +254,10 @@ const handleManageTickets = (row) => {
   window.location.href = `/admin/tickets?showId=${row.id}&showName=${encodeURIComponent(row.name)}`;
 };
 
+const goBack = () => {
+  router.push('/admin');
+};
+
 const handleDelete = (row) => {
   ElMessageBox.confirm(`确定要删除演出"${row.name}"吗？`, '提示', {
     type: 'warning'
@@ -306,10 +295,6 @@ const handleSubmit = async () => {
   } finally {
     submitting.value = false;
   }
-};
-
-const goBack = () => {
-  router.push('/admin');
 };
 
 onMounted(() => {

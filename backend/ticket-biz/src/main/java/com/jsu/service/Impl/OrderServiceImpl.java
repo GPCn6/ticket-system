@@ -33,25 +33,16 @@ public class OrderServiceImpl implements OrderService {
     private final TicketService ticketService;
     private final SeckillSessionMapper seckillSessionMapper;
 
-    /**
-     * 为订单附加详细信息
-     * 加载关联的演出、票档、秒杀价格等信息
-     *
-     * @param order 订单对象
-     */
     private void attachDetails(Order order) {
         if (order == null) {
             return;
         }
-        // 加载关联演出信息
         if (order.getShowId() != null) {
             order.setShow(showService.getById(order.getShowId()));
         }
-        // 加载关联票档信息
         if (order.getTicketId() != null) {
             order.setTicket(ticketService.getById(order.getTicketId()));
         }
-        // 秒杀订单：加载秒杀价格
         if (order.getIsSeckill() != null && order.getIsSeckill() == 1 && order.getSessionId() != null) {
             SeckillSession session = seckillSessionMapper.selectById(order.getSessionId());
             if (session != null && session.getSeckillPrice() != null) {
@@ -70,50 +61,41 @@ public class OrderServiceImpl implements OrderService {
      * 5. 计算订单金额
      * 6. 生成唯一订单号
      * 7. 设置15分钟支付过期时间
-     *
-     * @param order 订单信息
-     * @return 创建成功的订单
-     * @throws BusinessException 演出不可用/票档不存在/库存不足等
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Order create(Order order) {
-        // 校验必填参数
         if (order.getShowId() == null || order.getTicketId() == null) {
             throw new IllegalArgumentException("缺少演出或票档信息");
         }
 
-        // 校验演出状态（必须为上架中）
         var show = showService.getById(order.getShowId());
-        if (show == null || show.getStatus() == null || show.getStatus() != ShowStatus.ONSALE.getCode()) {
+        if (show == null || show.getStatus() == null
+                || !Integer.valueOf(ShowStatus.ONSALE.getCode()).equals(show.getStatus())) {
             throw new BusinessException("该演出当前不可下单");
         }
-        // 校验票档存在性
         var ticket = ticketService.getById(order.getTicketId());
         if (ticket == null) {
             throw new BusinessException("票档不存在");
         }
-        // 校验票档与演出匹配
         if (!order.getShowId().equals(ticket.getShowId())) {
             throw new BusinessException("票档与演出不匹配");
         }
-        // 设置默认购买数量
         if (order.getQuantity() == null || order.getQuantity() < 1) {
             order.setQuantity(1);
         }
-        // 校验库存
         if (ticket.getAvailableStock() == null || ticket.getAvailableStock() < order.getQuantity()) {
             throw new BusinessException("库存不足");
         }
 
-        // 扣减库存（使用乐观锁，防止超卖）
+        // 扣减库存（乐观锁防止超卖）
         boolean deducted = ticketService.deductStock(order.getTicketId(), order.getQuantity());
         if (!deducted) {
             throw new BusinessException("库存不足");
         }
 
-        // 计算订单金额（票档单价 × 数量）
-        if (order.getTicketId() != null
-                && (order.getTotalAmount() == null || order.getTotalAmount().signum() <= 0)) {
+        // 计算订单金额
+        if (order.getTotalAmount() == null || order.getTotalAmount().signum() <= 0) {
             if (ticket != null && ticket.getPrice() != null) {
                 order.setTotalAmount(ticket.getPrice().multiply(BigDecimal.valueOf(order.getQuantity())));
             }
@@ -122,21 +104,16 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("无法计算订单金额，请检查票档与数量");
         }
 
-        // 设置订单信息
-        order.setOrderNo(StringUtils.generateOrderNo());     // 生成唯一订单号
-        order.setStatus(OrderStatus.PENDING.getCode());     // 待支付状态
-        order.setIsSeckill(0);                              // 普通订单，非秒杀
-        order.setExpireTime(LocalDateTime.now().plusMinutes(15)); // 15分钟支付过期时间
+        order.setOrderNo(StringUtils.generateOrderNo());
+        order.setStatus(OrderStatus.PENDING.getCode());
+        order.setIsSeckill(0);
+        order.setExpireTime(LocalDateTime.now().plusMinutes(15));
 
-        // 插入数据库
         orderMapper.insert(order);
         attachDetails(order);
         return order;
     }
 
-    /**
-     * 根据ID获取订单详情
-     */
     @Override
     public Order getById(Long id) {
         Order order = orderMapper.selectById(id);
@@ -144,9 +121,6 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    /**
-     * 根据订单号获取订单
-     */
     @Override
     public Order getByOrderNo(String orderNo) {
         Order order = orderMapper.selectByOrderNo(orderNo);
@@ -154,14 +128,6 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    /**
-     * 获取用户的订单列表（分页）
-     *
-     * @param page 分页参数
-     * @param userId 用户ID
-     * @param status 订单状态筛选（可选）
-     * @return 分页后的订单列表
-     */
     @Override
     public IPage<Order> getUserOrders(Page<Order> page, Long userId, Integer status) {
         IPage<Order> result = orderMapper.selectUserOrders(page, userId, status);
@@ -169,9 +135,6 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    /**
-     * 获取所有订单（管理员用，分页）
-     */
     @Override
     public IPage<Order> getAllOrders(Page<Order> page, Integer status) {
         IPage<Order> result = orderMapper.selectAllOrders(page, status);
@@ -182,35 +145,33 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 取消订单
      * 仅可取消状态为"待支付"的订单
-     *
-     * @param id 订单ID
-     * @return true=取消成功，false=订单不存在或状态不允许取消
+     * 取消后自动恢复票档库存（同步，避免MQ延迟导致的库存不一致）
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean cancel(Long id) {
         Order order = orderMapper.selectById(id);
         if (order == null) {
             return false;
         }
-        // 只能取消待支付状态的订单
         if (order.getStatus() != OrderStatus.PENDING.getCode()) {
             return false;
         }
         order.setStatus(OrderStatus.CANCELLED.getCode());
-        return orderMapper.updateById(order) > 0;
+        int updated = orderMapper.updateById(order);
+        if (updated > 0) {
+            // 同步恢复库存
+            ticketService.restoreStock(order.getTicketId(), order.getQuantity());
+        }
+        return updated > 0;
     }
 
     /**
      * 支付订单
      * 校验订单状态，设置支付时间
-     *
-     * @param orderNo 订单号
-     * @return true=支付成功
-     * @throws BusinessException 订单不存在/已取消/状态异常/已过期
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean pay(String orderNo) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order == null) {
@@ -222,11 +183,9 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() != OrderStatus.PENDING.getCode()) {
             throw new BusinessException("订单状态异常，无法支付");
         }
-        // 检查订单是否过期
         if (order.getExpireTime() != null && order.getExpireTime().isBefore(LocalDateTime.now())) {
             throw new BusinessException("订单已过期，请重新下单");
         }
-        // 更新为已支付状态
         order.setStatus(OrderStatus.PAID.getCode());
         order.setPayTime(LocalDateTime.now());
         return orderMapper.updateById(order) > 0;

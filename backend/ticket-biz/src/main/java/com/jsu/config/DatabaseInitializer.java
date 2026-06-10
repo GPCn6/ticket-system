@@ -8,7 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * 数据库结构初始化器：启动时自动检查并补充缺失的列
+ * Database initializer: auto-check and add missing columns on startup.
+ * Also handles password migration from plaintext to BCrypt.
  */
 @Component
 @Slf4j
@@ -19,34 +20,30 @@ public class DatabaseInitializer {
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        addColumnIfNotExists("biz_order", "session_id", "BIGINT DEFAULT NULL COMMENT '秒杀场次ID'");
-        addColumnIfNotExists("biz_order", "is_seckill", "INT DEFAULT 0 COMMENT '是否秒杀订单 0-否 1-是'");
-        addColumnIfNotExists("biz_order", "pay_time", "datetime DEFAULT NULL COMMENT '支付时间'");
+        addColumnIfNotExists("biz_order", "session_id", "BIGINT DEFAULT NULL COMMENT 'seckill session ID'");
+        addColumnIfNotExists("biz_order", "is_seckill", "INT DEFAULT 0 COMMENT 'is seckill order: 0=no, 1=yes'");
+        addColumnIfNotExists("biz_order", "pay_time", "datetime DEFAULT NULL COMMENT 'payment time'");
 
-        // 补全历史订单缺失的 create_time（兼容已有的 NULL 数据）
         backfillCreateTime("biz_order");
         backfillCreateTime("biz_show");
         backfillCreateTime("biz_ticket");
         backfillCreateTime("biz_seckill_session");
 
-        // 修复历史订单中 is_seckill 为 NULL 的数据（兼容代码添加前的历史数据）
         backfillIsSeckill();
+        migratePlaintextPasswords();
 
-        log.info("数据库结构检查完成");
+        log.info("Database structure check completed");
     }
 
-    /**
-     * 修复历史订单中 is_seckill 为 NULL 的数据
-     */
     private void backfillIsSeckill() {
         try {
             int updated = jdbcTemplate.update(
                     "UPDATE biz_order SET is_seckill = 0 WHERE is_seckill IS NULL");
             if (updated > 0) {
-                log.info("已修复 biz_order.is_seckill 历史数据: {} 条", updated);
+                log.info("Backfilled biz_order.is_seckill: {} rows", updated);
             }
         } catch (Exception e) {
-            log.warn("修复 biz_order.is_seckill 失败: {}", e.getMessage());
+            log.warn("Failed to backfill biz_order.is_seckill: {}", e.getMessage());
         }
     }
 
@@ -55,10 +52,10 @@ public class DatabaseInitializer {
             int updated = jdbcTemplate.update(
                     "UPDATE " + tableName + " SET create_time = NOW() WHERE create_time IS NULL");
             if (updated > 0) {
-                log.info("已补全 {}.create_time 历史数据: {} 条", tableName, updated);
+                log.info("Backfilled {}.create_time: {} rows", tableName, updated);
             }
         } catch (Exception e) {
-            log.warn("补全 {}.create_time 失败: {}", tableName, e.getMessage());
+            log.warn("Failed to backfill {}.create_time: {}", tableName, e.getMessage());
         }
     }
 
@@ -70,10 +67,36 @@ public class DatabaseInitializer {
             if (count != null && count == 0) {
                 String alterSql = String.format("ALTER TABLE %s ADD COLUMN %s %s", tableName, columnName, columnDefinition);
                 jdbcTemplate.execute(alterSql);
-                log.info("已添加列: {}.{}", tableName, columnName);
+                log.info("Added column: {}.{}", tableName, columnName);
             }
         } catch (Exception e) {
-            log.warn("检查/添加列失败: {}.{} - {}", tableName, columnName, e.getMessage());
+            log.warn("Failed to check/add column {}.{}: {}", tableName, columnName, e.getMessage());
+        }
+    }
+
+    /**
+     * Auto-migrate plaintext passwords to BCrypt on startup (backward compatibility).
+     * Any user whose password does NOT start with "$2a$" (BCrypt prefix) will be re-encrypted.
+     */
+    private void migratePlaintextPasswords() {
+        try {
+            var users = jdbcTemplate.queryForList(
+                    "SELECT id, password FROM sys_user WHERE password NOT LIKE '$2a$%'");
+            if (users.isEmpty()) {
+                return;
+            }
+            org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder =
+                    new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+            for (var user : users) {
+                Long id = ((Number) user.get("id")).longValue();
+                String plainPwd = (String) user.get("password");
+                String encoded = encoder.encode(plainPwd);
+                jdbcTemplate.update("UPDATE sys_user SET password = ? WHERE id = ?", encoded, id);
+                log.info("Migrated password for user: id={}", id);
+            }
+            log.info("Plaintext password migration completed: {} users", users.size());
+        } catch (Exception e) {
+            log.warn("Password migration check failed: {}", e.getMessage());
         }
     }
 }

@@ -10,7 +10,6 @@ D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\config\SwaggerConfig.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\util\IpUtils.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\config\RedisConfig.java
-D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\exception\ErrorCode.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\entity\User.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\result\Result.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\config\RabbitMQConfig.java
