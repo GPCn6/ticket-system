@@ -1,67 +1,47 @@
 <template>
-  <div class="register">
-    <div class="container">
-      <div class="register-form">
-        <h1 class="register-title">注册</h1>
+  <main class="auth-page">
+    <section class="auth-panel" aria-labelledby="register-title">
+      <header class="auth-header">
+        <p class="auth-kicker">Ticket+</p>
+        <h1 id="register-title">创建账户</h1>
+        <p>创建账号后即可保存订单并参与演出购票。</p>
+      </header>
+
+      <form class="auth-form" @submit.prevent="register">
         <div class="form-group">
           <label for="username">用户名</label>
-          <input 
-            type="text" 
-            id="username" 
-            v-model="form.username" 
-            placeholder="请输入用户名"
-          >
+          <input id="username" v-model.trim="form.username" class="ui-input" type="text" autocomplete="username" placeholder="请输入用户名" :disabled="isLoading" required />
         </div>
         <div class="form-group">
           <label for="password">密码</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="form.password" 
-            placeholder="请输入密码"
-          >
+          <input id="password" v-model="form.password" class="ui-input" type="password" autocomplete="new-password" placeholder="请输入密码" :disabled="isLoading" required />
         </div>
         <div class="form-group">
           <label for="confirmPassword">确认密码</label>
-          <input 
-            type="password" 
-            id="confirmPassword" 
-            v-model="form.confirmPassword" 
-            placeholder="请确认密码"
-          >
+          <input id="confirmPassword" v-model="form.confirmPassword" class="ui-input" type="password" autocomplete="new-password" placeholder="请再次输入密码" :disabled="isLoading" required />
         </div>
-        <div class="form-group">
-          <label for="email">邮箱</label>
-          <input 
-            type="email" 
-            id="email" 
-            v-model="form.email" 
-            placeholder="请输入邮箱"
-          >
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="email">邮箱 <span>选填</span></label>
+            <input id="email" v-model.trim="form.email" class="ui-input" type="email" autocomplete="email" placeholder="name@example.com" :disabled="isLoading" />
+          </div>
+          <div class="form-group">
+            <label for="phone">手机号 <span>选填</span></label>
+            <input id="phone" v-model.trim="form.phone" class="ui-input" type="tel" autocomplete="tel" placeholder="请输入手机号" :disabled="isLoading" />
+          </div>
         </div>
-        <div class="form-group">
-          <label for="phone">手机</label>
-          <input 
-            type="tel" 
-            id="phone" 
-            v-model="form.phone" 
-            placeholder="请输入手机号"
-          >
-        </div>
-        <div class="form-actions">
-          <button class="register-btn" @click="register" :disabled="isLoading">
-            {{ isLoading ? '注册中...' : '注册' }}
-          </button>
-          <a href="/login" class="login-link">已有账号？立即登录</a>
-        </div>
-        <div class="error-message" v-if="error">{{ error }}</div>
-      </div>
-    </div>
-  </div>
+
+        <p v-if="error" class="form-error" role="alert">{{ error }}</p>
+        <button type="submit" class="ui-button ui-button--primary auth-submit" :disabled="isLoading">{{ isLoading ? '正在创建账户' : '创建账户' }}</button>
+      </form>
+
+      <footer class="auth-footer"><span>已有账号？</span><RouterLink to="/login">立即登录</RouterLink></footer>
+    </section>
+  </main>
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../../store/user';
 
@@ -70,154 +50,36 @@ export default {
   setup() {
     const router = useRouter();
     const userStore = useUserStore();
-    const form = reactive({
-      username: '',
-      password: '',
-      confirmPassword: '',
-      email: '',
-      phone: ''
-    });
+    const form = reactive({ username: '', password: '', confirmPassword: '', email: '', phone: '' });
     const isLoading = ref(false);
     const error = ref('');
 
     const register = async () => {
       if (!form.username || !form.password || !form.confirmPassword) {
-        error.value = '请填写必填字段';
+        error.value = '请填写用户名、密码和确认密码。';
         return;
       }
-
       if (form.password !== form.confirmPassword) {
-        error.value = '两次输入的密码不一致';
+        error.value = '两次输入的密码不一致。';
         return;
       }
-
       try {
         isLoading.value = true;
         error.value = '';
-        await userStore.register({
-          username: form.username,
-          password: form.password,
-          email: form.email,
-          phone: form.phone
-        });
+        await userStore.register({ username: form.username, password: form.password, email: form.email, phone: form.phone });
         await router.replace('/');
       } catch (err) {
-        error.value = err.message || '注册失败，请重试';
+        error.value = err.message || '注册失败，请重试。';
         console.error(err);
-      } finally {
-        isLoading.value = false;
-      }
+      } finally { isLoading.value = false; }
     };
 
-    return {
-      form,
-      isLoading,
-      error,
-      register
-    };
+    return { form, isLoading, error, register };
   }
 };
 </script>
 
 <style scoped>
-.register {
-  padding: 60px 0;
-  background: #f5f5f5;
-  min-height: 100vh;
-}
-
-.container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.register-form {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.register-title {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #333;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #1890ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-}
-
-.form-actions {
-  margin-top: 30px;
-}
-
-.register-btn {
-  width: 100%;
-  padding: 12px;
-  background: #1890ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.register-btn:hover {
-  background: #40a9ff;
-}
-
-.register-btn:disabled {
-  background: #d9d9d9;
-  cursor: not-allowed;
-}
-
-.login-link {
-  display: block;
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #1890ff;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.login-link:hover {
-  color: #40a9ff;
-}
-
-.error-message {
-  margin-top: 15px;
-  padding: 10px;
-  background: #fff1f0;
-  border: 1px solid #ffccc7;
-  border-radius: 4px;
-  color: #ff4d4f;
-  font-size: 14px;
-}
+.auth-page { display: grid; min-height: calc(100dvh - 80px); place-items: center; padding: 48px 24px; background: var(--surface-2); }.auth-panel { width: min(100%, 620px); padding: 0; }.auth-header { padding: 0 0 28px; border-bottom: 2px solid var(--ink); }.auth-kicker { margin-bottom: 12px; color: var(--brand); font-size: 14px; font-weight: 800; }.auth-header h1 { font-size: 32px; }.auth-header p:last-child { margin-top: 10px; color: var(--ink-2); }.auth-form { display: grid; gap: 18px; padding: 28px 0; }.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }.form-group { display: grid; gap: 8px; }.form-group label { color: var(--ink); font-size: 13px; font-weight: 700; }.form-group label span { color: var(--ink-3); font-weight: 500; }.ui-input { box-sizing: border-box; }.form-error { padding: 10px 12px; border-left: 3px solid #bd3f30; background: #fff4f2; color: #a63125; font-size: 13px; }.auth-submit { width: 100%; min-height: 44px; margin-top: 4px; }.auth-footer { display: flex; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 13px; }.auth-footer a { color: var(--brand); font-weight: 700; }.auth-footer a:hover { color: var(--brand-hover); }
+@media (max-width: 560px) { .auth-page { align-items: start; padding: 32px 16px; }.auth-header h1 { font-size: 28px; }.form-grid { grid-template-columns: 1fr; gap: 18px; } }
 </style>

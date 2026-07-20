@@ -1,0 +1,11 @@
+**/target/
+**/.idea/
+**/.vs/
+*.iml
+*.class
+node_modules/
+dist/
+.edge-profile*/
+.env
+.env.*
+!.env.example

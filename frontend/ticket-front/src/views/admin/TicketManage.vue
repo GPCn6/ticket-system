@@ -1,14 +1,17 @@
 <template>
-  <div class="ticket-manage">
-    <div class="page-header">
-      <div class="header-left">
-        <el-button @click="goBack">
-          <el-icon><ArrowLeft /></el-icon>
-          返回
-        </el-button>
-        <h2>票档管理 - {{ showName || '选择演出' }}</h2>
+  <main class="page-shell admin-page ticket-manage">
+    <header class="admin-page-heading">
+      <div class="admin-title-group">
+        <el-tooltip content="返回运营总览" placement="bottom">
+          <el-button class="back-button" :icon="ArrowLeft" circle aria-label="返回运营总览" @click="goBack" />
+        </el-tooltip>
+        <div>
+          <p class="admin-eyebrow">INVENTORY CONTROL</p>
+          <h1>票档管理</h1>
+          <p>{{ showName ? `正在维护：${showName}` : '选择演出后，查看并维护可售票档。' }}</p>
+        </div>
       </div>
-      <el-select v-model="selectedShowId" placeholder="请选择演出" @change="onShowChange" filterable>
+      <el-select class="show-switcher" v-model="selectedShowId" placeholder="选择演出" @change="onShowChange" filterable>
         <el-option
           v-for="show in showList"
           :key="show.id"
@@ -16,19 +19,19 @@
           :value="show.id"
         />
       </el-select>
-    </div>
+    </header>
 
-    <!-- 票档列表 -->
-    <el-card v-if="selectedShowId">
-      <template #header>
-        <div class="card-header">
-          <span>票档列表</span>
-          <el-button type="primary" size="small" @click="handleCreate">
+    <section v-if="selectedShowId" class="table-frame">
+      <div class="table-frame-heading">
+        <div>
+          <h2>票档列表</h2>
+          <span>{{ tableData.length }} 个票档</span>
+        </div>
+        <el-button type="primary" @click="handleCreate">
             <el-icon><Plus /></el-icon>
             添加票档
-          </el-button>
-        </div>
-      </template>
+        </el-button>
+      </div>
 
       <el-table :data="tableData" v-loading="loading" stripe>
         <el-table-column prop="name" label="票档名称" min-width="120" />
@@ -47,9 +50,11 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+    </section>
 
-    <el-empty v-else description="请先选择演出" />
+    <section v-else class="empty-frame">
+      <el-empty description="选择一场演出后管理票档" />
+    </section>
 
     <!-- 编辑对话框 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="500px" destroy-on-close>
@@ -72,7 +77,7 @@
         <el-button type="primary" @click="handleSubmit" :loading="submitting">确定</el-button>
       </template>
     </el-dialog>
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -226,37 +231,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.ticket-manage {
-  padding: 20px;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-left h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.price {
-  color: #ff4d4f;
-  font-weight: 600;
+.admin-page { padding-block: 32px 56px; }
+.admin-page-heading, .admin-title-group, .table-frame-heading { display: flex; align-items: center; }
+.admin-page-heading { justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+.admin-title-group { gap: 12px; min-width: 0; }
+.admin-eyebrow { margin: 0 0 4px; color: var(--ink-3); font-size: 11px; font-weight: 750; letter-spacing: .08em; }
+.admin-title-group h1 { margin: 0; font-size: 26px; font-weight: 760; }
+.admin-title-group p:not(.admin-eyebrow) { margin: 5px 0 0; color: var(--ink-2); font-size: 13px; }
+.back-button { flex: 0 0 auto; }
+.show-switcher { width: min(300px, 100%); flex: 0 1 300px; }
+.table-frame, .empty-frame { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.table-frame-heading { justify-content: space-between; min-height: 58px; gap: 16px; padding: 0 18px; border-bottom: 1px solid var(--line); }
+.table-frame-heading h2 { margin: 0; font-size: 15px; font-weight: 720; }
+.table-frame-heading span { margin-left: 10px; color: var(--ink-3); font-size: 12px; }
+.table-frame :deep(.el-table) { --el-table-border-color: var(--line); }
+.empty-frame { min-height: 280px; display: grid; place-items: center; }
+.price { color: var(--brand); font-weight: 720; font-variant-numeric: tabular-nums; }
+@media (max-width: 768px) {
+  .admin-page-heading { align-items: stretch; flex-direction: column; }
+  .show-switcher { width: 100%; max-width: none; }
+  .table-frame-heading { align-items: flex-start; flex-direction: column; padding: 14px; }
+  .table-frame-heading > .el-button { width: 100%; }
 }
 </style>

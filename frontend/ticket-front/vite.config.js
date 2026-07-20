@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
+const gatewayTarget = process.env.VITE_DEV_GATEWAY_TARGET || 'http://localhost:8080'
+
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -12,16 +14,8 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/api/user': {
-        target: 'http://localhost:8081',
-        changeOrigin: true
-      },
       '/api': {
-        target: 'http://localhost:8082',
-        changeOrigin: true
-      },
-      '/ticket': {
-        target: 'http://localhost:8082',
+        target: gatewayTarget,
         changeOrigin: true
       }
     }

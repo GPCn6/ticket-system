@@ -1,50 +1,46 @@
 <template>
-  <div class="login">
-    <div class="container">
-      <div class="login-form">
-        <h1 class="login-title">登录</h1>
+  <main class="auth-page">
+    <section class="auth-panel" aria-labelledby="login-title">
+      <header class="auth-header">
+        <p class="auth-kicker">Ticket+</p>
+        <h1 id="login-title">登录账户</h1>
+        <p>登录后继续管理你的演出、订单与购票记录。</p>
+      </header>
+
+      <form class="auth-form" @submit.prevent="login">
         <div class="form-group">
           <label for="username">用户名</label>
-          <input 
-            type="text" 
-            id="username" 
-            v-model="form.username" 
-            placeholder="请输入用户名"
-          >
+          <input id="username" v-model.trim="form.username" class="ui-input" type="text" autocomplete="username" placeholder="请输入用户名" :disabled="isLoading" required />
         </div>
         <div class="form-group">
           <label for="password">密码</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="form.password" 
-            placeholder="请输入密码"
-          >
+          <input id="password" v-model="form.password" class="ui-input" type="password" autocomplete="current-password" placeholder="请输入密码" :disabled="isLoading" required />
         </div>
-        <div class="form-actions">
-          <button class="login-btn" @click="login" :disabled="isLoading">
-            {{ isLoading ? '登录中...' : '登录' }}
-          </button>
-          <a href="/register" class="register-link">注册新账号</a>
-        </div>
-        <div class="error-message" v-if="error">{{ error }}</div>
-      </div>
-    </div>
-  </div>
+
+        <p v-if="error" class="form-error" role="alert">{{ error }}</p>
+
+        <button type="submit" class="ui-button ui-button--primary auth-submit" :disabled="isLoading">
+          {{ isLoading ? '正在登录' : '登录' }}
+        </button>
+      </form>
+
+      <footer class="auth-footer">
+        <span>还没有账号？</span>
+        <RouterLink to="/register">注册新账号</RouterLink>
+      </footer>
+    </section>
+  </main>
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '../../store/user';
 
 export default {
   name: 'Login',
   setup() {
-    const form = reactive({
-      username: '',
-      password: ''
-    });
+    const form = reactive({ username: '', password: '' });
     const isLoading = ref(false);
     const error = ref('');
     const userStore = useUserStore();
@@ -53,10 +49,9 @@ export default {
 
     const login = async () => {
       if (!form.username || !form.password) {
-        error.value = '请输入用户名和密码';
+        error.value = '请输入用户名和密码。';
         return;
       }
-
       try {
         isLoading.value = true;
         error.value = '';
@@ -64,122 +59,17 @@ export default {
         const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/';
         await router.replace(redirect || '/');
       } catch (err) {
-        error.value = err.message || '登录失败，请重试';
+        error.value = err.message || '登录失败，请重试。';
         console.error(err);
-      } finally {
-        isLoading.value = false;
-      }
+      } finally { isLoading.value = false; }
     };
 
-    return {
-      form,
-      isLoading,
-      error,
-      login
-    };
+    return { form, isLoading, error, login };
   }
 };
 </script>
 
 <style scoped>
-.login {
-  padding: 60px 0;
-  background: #f5f5f5;
-  min-height: 100vh;
-}
-
-.container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.login-form {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.login-title {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #333;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #1890ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-}
-
-.form-actions {
-  margin-top: 30px;
-}
-
-.login-btn {
-  width: 100%;
-  padding: 12px;
-  background: #1890ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.login-btn:hover {
-  background: #40a9ff;
-}
-
-.login-btn:disabled {
-  background: #d9d9d9;
-  cursor: not-allowed;
-}
-
-.register-link {
-  display: block;
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #1890ff;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.register-link:hover {
-  color: #40a9ff;
-}
-
-.error-message {
-  margin-top: 15px;
-  padding: 10px;
-  background: #fff1f0;
-  border: 1px solid #ffccc7;
-  border-radius: 4px;
-  color: #ff4d4f;
-  font-size: 14px;
-}
+.auth-page { display: grid; min-height: calc(100dvh - 80px); place-items: center; padding: 48px 24px; background: var(--surface-2); }.auth-panel { width: min(100%, 430px); padding: 0; }.auth-header { padding: 0 0 28px; border-bottom: 2px solid var(--ink); }.auth-kicker { margin-bottom: 12px; color: var(--brand); font-size: 14px; font-weight: 800; }.auth-header h1 { font-size: 32px; }.auth-header p:last-child { margin-top: 10px; color: var(--ink-2); }.auth-form { display: grid; gap: 18px; padding: 28px 0; }.form-group { display: grid; gap: 8px; }.form-group label { color: var(--ink); font-size: 13px; font-weight: 700; }.ui-input { box-sizing: border-box; }.form-error { padding: 10px 12px; border-left: 3px solid #bd3f30; background: #fff4f2; color: #a63125; font-size: 13px; }.auth-submit { width: 100%; min-height: 44px; margin-top: 4px; }.auth-footer { display: flex; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 13px; }.auth-footer a { color: var(--brand); font-weight: 700; }.auth-footer a:hover { color: var(--brand-hover); }
+@media (max-width: 480px) { .auth-page { align-items: start; padding: 32px 16px; }.auth-header h1 { font-size: 28px; } }
 </style>

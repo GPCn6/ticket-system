@@ -3,6 +3,7 @@ package com.jsu.filter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import com.jsu.common.security.InternalAuth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -37,11 +38,14 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
     private final String jwtSecret;
     private final ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
+    private final String internalAuthSecret;
 
     public AuthFilter(
-            @Value("${jwt.secret:TicketSystemSecretKey2026ForJWTTokenGeneration}") String jwtSecret,
+            @Value("${jwt.secret}") String jwtSecret,
+            @Value("${internal.auth.secret}") String internalAuthSecret,
             ReactiveRedisTemplate<String, Object> reactiveRedisTemplate) {
         this.jwtSecret = jwtSecret;
+        this.internalAuthSecret = internalAuthSecret;
         this.reactiveRedisTemplate = reactiveRedisTemplate;
     }
 
@@ -53,7 +57,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
         // 放行公开接口
         if (isPublicEndpoint(path, method)) {
-            return chain.filter(exchange);
+            return forwardWithInternalAuth(exchange, chain, null, null);
         }
 
         // 提取 Token
@@ -87,13 +91,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
                             return forbidden(exchange);
                         }
                         // 注入用户信息到请求头
-                        ServerWebExchange mutableExchange = exchange.mutate()
-                                .request(exchange.getRequest().mutate()
-                                        .header("X-User-Id", userId)
-                                        .header("X-User-Role", role == null ? "user" : role)
-                                        .build())
-                                .build();
-                        return chain.filter(mutableExchange);
+                        return forwardWithInternalAuth(exchange, chain, userId, role);
                     });
         } catch (Exception e) {
             return unauthorized(exchange);
@@ -118,7 +116,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
     private boolean isPublicEndpoint(String path, String method) {
         if ("/api/user/login".equals(path) || "/api/user/register".equals(path)
-                || "/api/user/login-debug".equals(path)) {
+                ) {
             return true;
         }
         if ("GET".equals(method) && (path.startsWith("/api/show/") || path.startsWith("/api/ticket/"))) {
@@ -130,6 +128,22 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return true;
         }
         return false;
+    }
+
+    private Mono<Void> forwardWithInternalAuth(ServerWebExchange exchange, GatewayFilterChain chain,
+                                                String userId, String role) {
+        var requestBuilder = exchange.getRequest().mutate()
+                .headers(headers -> {
+                    headers.remove(InternalAuth.HEADER);
+                    headers.remove(InternalAuth.USER_ID_HEADER);
+                    headers.remove(InternalAuth.USER_ROLE_HEADER);
+                })
+                .header(InternalAuth.HEADER, internalAuthSecret);
+        if (userId != null) {
+            requestBuilder.header(InternalAuth.USER_ID_HEADER, userId);
+            requestBuilder.header(InternalAuth.USER_ROLE_HEADER, role == null ? "user" : role);
+        }
+        return chain.filter(exchange.mutate().request(requestBuilder.build()).build());
     }
 
     private boolean isAdminEndpoint(String path, String method) {

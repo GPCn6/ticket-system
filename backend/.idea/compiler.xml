@@ -13,7 +13,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$PROJECT_DIR$/../../../../downed/apache-maven-3.9.14-bin/apache-maven-3.9.14/mvn_repo/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+          <entry name="$PROJECT_DIR$/../../../../Maven/apache-maven-3.9.9/repository/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+          <entry name="$PROJECT_DIR$/../../../../Maven/apache-maven-3.9.9/repository/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="ticket-user" />
         <module name="ticket-common" />

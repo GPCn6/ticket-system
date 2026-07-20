@@ -12,13 +12,6 @@ http.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     // 添加用户信息到请求头
-    const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
-    if (userInfo && userInfo.id) {
-      config.headers['X-User-Id'] = userInfo.id;
-      if (userInfo.role) {
-        config.headers['X-User-Role'] = userInfo.role;
-      }
-    }
     return config;
   },
   (error) => Promise.reject(error)

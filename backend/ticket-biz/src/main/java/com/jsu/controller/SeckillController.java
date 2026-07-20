@@ -2,6 +2,7 @@ package com.jsu.controller;
 
 import com.jsu.common.result.Result;
 import com.jsu.entity.SeckillSession;
+import com.jsu.dto.SeckillExecuteRequest;
 import com.jsu.service.SeckillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,9 +26,10 @@ public class SeckillController {
 
     @PostMapping("/execute")
     @Operation(summary = "执行抢购")
-    public Result<?> execute(@RequestBody Map<String, Object> request, HttpServletRequest httpRequest) {
-        Long sessionId = Long.parseLong(request.get("sessionId").toString());
-        int quantity = Integer.parseInt(request.get("quantity").toString());
+    public Result<?> execute(@RequestBody SeckillExecuteRequest request, HttpServletRequest httpRequest) {
+        if (request.sessionId() == null || request.quantity() == null || request.quantity() < 1 || request.quantity() > 2) {
+            return Result.fail("抢购数量必须为1至2");
+        }
 
         String userIdHeader = httpRequest.getHeader("X-User-Id");
         if (userIdHeader == null || userIdHeader.trim().isEmpty()) {
@@ -39,7 +41,7 @@ public class SeckillController {
         } catch (NumberFormatException e) {
             return Result.fail(401, "用户身份无效");
         }
-        return seckillService.seckill(sessionId, userId, quantity);
+        return seckillService.seckill(request.sessionId(), userId, request.quantity());
     }
 
     /**

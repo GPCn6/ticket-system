@@ -13,16 +13,16 @@ public class GatewayConfig {
         return builder.routes()
                 .route("user-service", r -> r
                         .path("/api/user/**")
-                        .uri("http://localhost:8081"))
+                        .uri(System.getenv().getOrDefault("USER_SERVICE_URL", "http://localhost:8081")))
                 .route("biz-service", r -> r
                         .path("/api/show/**", "/api/ticket/**", "/api/order/**", "/api/seckill/**")
-                        .uri("http://localhost:8082"))
+                        .uri(System.getenv().getOrDefault("BIZ_SERVICE_URL", "http://localhost:8082")))
                 .route("static-resources", r -> r
                         .path("/static/**", "/favicon.ico")
-                        .uri("http://localhost:3000"))
+                        .uri(System.getenv().getOrDefault("FRONTEND_URL", "http://localhost:3000")))
                 .route("frontend", r -> r
                         .path("/**")
-                        .uri("http://localhost:3000"))
+                        .uri(System.getenv().getOrDefault("FRONTEND_URL", "http://localhost:3000")))
                 .build();
     }
 }

@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     /** Token 黑名单 Key 前缀 */
     private static final String TOKEN_BLACKLIST_PREFIX = "token:blacklist:";
 
-    @Value("${jwt.secret:TicketSystemSecretKey2026ForJWTTokenGeneration}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expiration:7200000}")
@@ -52,6 +52,9 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectByUsername(username);
         if (user == null) {
             throw new BusinessException(ResultCode.USER_NOT_EXIST);
+        }
+        if (user.getStatus() != null && user.getStatus() != 1) {
+            throw new BusinessException(ResultCode.FORBIDDEN);
         }
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BusinessException(ResultCode.PASSWORD_ERROR);
@@ -76,7 +79,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (user.getStatus() == null) user.setStatus(1);
         if (user.getNickname() == null) user.setNickname(user.getUsername());
-        if (user.getRole() == null) user.setRole("user");
+        user.setRole("user");
         userMapper.insert(user);
         user.setToken(generateToken(user.getId(), user.getRole()));
         return user;

@@ -1,18 +1,20 @@
 <template>
-  <div class="order-manage">
-    <div class="page-header">
-      <div class="header-left">
-        <el-button @click="goBack">
-          <el-icon><ArrowLeft /></el-icon>
-          返回
-        </el-button>
-        <h2>订单管理</h2>
+  <main class="page-shell admin-page order-manage">
+    <header class="admin-page-heading">
+      <div class="admin-title-group">
+        <el-tooltip content="返回运营总览" placement="bottom">
+          <el-button class="back-button" :icon="ArrowLeft" circle aria-label="返回运营总览" @click="goBack" />
+        </el-tooltip>
+        <div>
+          <p class="admin-eyebrow">ORDER OPERATIONS</p>
+          <h1>订单管理</h1>
+          <p>检索订单进度、支付状态与票务明细。</p>
+        </div>
       </div>
       <el-button type="danger" @click="handleResetAll" :loading="resetting">重置全部数据</el-button>
-    </div>
+    </header>
 
-    <!-- 搜索筛选 -->
-    <el-card class="filter-card">
+    <section class="admin-filter" aria-label="订单筛选">
       <el-form :inline="true" :model="searchForm">
         <el-form-item label="订单号">
           <el-input v-model="searchForm.orderNo" placeholder="请输入订单号" clearable />
@@ -22,8 +24,8 @@
             <el-option label="待支付" :value="0" />
             <el-option label="已支付" :value="1" />
             <el-option label="已取消" :value="2" />
-            <el-option label="已完成" :value="3" />
-            <el-option label="已退款" :value="4" />
+            <el-option label="已退款" :value="3" />
+            <el-option label="已完成" :value="4" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -31,10 +33,15 @@
           <el-button @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
-    </el-card>
+    </section>
 
-    <!-- 数据表格 -->
-    <el-card>
+    <section class="table-frame">
+      <div class="table-frame-heading">
+        <div>
+          <h2>订单列表</h2>
+          <span>共 {{ pagination.total }} 笔订单</span>
+        </div>
+      </div>
       <el-table :data="tableData" v-loading="loading" stripe>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="orderNo" label="订单号" min-width="180" show-overflow-tooltip />
@@ -108,7 +115,7 @@
         @size-change="loadData"
         @current-change="loadData"
       />
-    </el-card>
+    </section>
 
     <!-- 订单详情对话框 -->
     <el-dialog v-model="detailVisible" title="订单详情" width="600px">
@@ -135,7 +142,7 @@
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -145,6 +152,7 @@ import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowLeft } from '@element-plus/icons-vue';
 import { orderApi } from '../../api/order';
+import { getOrderStatus } from '../../utils/ticketing-state';
 
 const router = useRouter();
 
@@ -165,21 +173,8 @@ const pagination = reactive({
   total: 0
 });
 
-const statusMap = {
-  0: { text: '待支付', type: 'warning' },
-  1: { text: '已支付', type: 'success' },
-  2: { text: '已取消', type: 'info' },
-  3: { text: '已完成', type: 'success' },
-  4: { text: '已退款', type: 'danger' }
-};
-
-const getStatusType = (status) => {
-  return statusMap[status]?.type || 'info';
-};
-
-const getStatusText = (status) => {
-  return statusMap[status]?.text || '未知';
-};
+const getStatusType = (status) => getOrderStatus(status).type;
+const getStatusText = (status) => getOrderStatus(status).text;
 
 const formatDateTime = (date) => {
   if (!date) return '-';
@@ -274,81 +269,39 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.order-manage {
-  padding: 20px;
-}
-
-.page-header {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.page-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.filter-card {
-  margin-bottom: 20px;
-}
-
-.pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.price {
-  color: #ff4d4f;
-  font-weight: 600;
-}
-
-.price-seckill {
-  font-size: 14px;
-}
-
-.price-original {
-  display: block;
-  font-size: 11px;
-  color: #999;
-  text-decoration: line-through;
-  font-weight: 400;
-}
-
-.ticket-info-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ticket-name {
-  font-size: 13px;
-  color: #333;
-}
-
-.ticket-unit-price {
-  font-size: 12px;
-  color: #666;
-}
-
-.seckill-price {
-  color: #ff4d4f;
-  font-weight: bold;
-}
-
-.ticket-original-price {
-  font-size: 11px;
-  color: #999;
-  text-decoration: line-through;
-  margin-left: 4px;
+.admin-page { padding-block: 32px 56px; }
+.admin-page-heading, .admin-title-group, .table-frame-heading, .admin-filter :deep(.el-form) { display: flex; align-items: center; }
+.admin-page-heading { justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+.admin-title-group { gap: 12px; min-width: 0; }
+.admin-eyebrow { margin: 0 0 4px; color: var(--ink-3); font-size: 11px; font-weight: 750; letter-spacing: .08em; }
+.admin-title-group h1 { margin: 0; font-size: 26px; font-weight: 760; }
+.admin-title-group p:not(.admin-eyebrow) { margin: 5px 0 0; color: var(--ink-2); font-size: 13px; }
+.back-button { flex: 0 0 auto; }
+.admin-filter { padding: 16px 0; margin-bottom: 18px; border-block: 1px solid var(--line); }
+.admin-filter :deep(.el-form) { flex-wrap: wrap; gap: 8px 12px; }
+.admin-filter :deep(.el-form-item) { margin: 0; }
+.admin-filter :deep(.el-input), .admin-filter :deep(.el-select) { width: 220px; }
+.table-frame { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.table-frame-heading { justify-content: space-between; min-height: 58px; padding: 0 18px; border-bottom: 1px solid var(--line); }
+.table-frame-heading h2 { margin: 0; font-size: 15px; font-weight: 720; }
+.table-frame-heading span { margin-left: 10px; color: var(--ink-3); font-size: 12px; }
+.table-frame :deep(.el-table) { --el-table-border-color: var(--line); }
+.pagination { display: flex; justify-content: flex-end; padding: 16px 18px; margin: 0; border-top: 1px solid var(--line); }
+.price { color: var(--brand); font-weight: 720; font-variant-numeric: tabular-nums; }
+.price-seckill { font-size: 14px; }
+.price-original, .ticket-original-price { color: var(--ink-3); font-size: 11px; font-weight: 400; text-decoration: line-through; }
+.price-original { display: block; }
+.ticket-info-cell { display: grid; gap: 3px; }
+.ticket-name { color: var(--ink); font-size: 13px; font-weight: 650; }
+.ticket-unit-price { color: var(--ink-2); font-size: 12px; }
+.seckill-price { color: var(--brand); font-weight: 720; }
+.ticket-original-price { margin-left: 4px; }
+@media (max-width: 768px) {
+  .admin-page-heading { align-items: stretch; flex-direction: column; }
+  .admin-page-heading > .el-button { width: 100%; }
+  .admin-filter :deep(.el-form) { display: grid; grid-template-columns: 1fr; }
+  .admin-filter :deep(.el-form-item), .admin-filter :deep(.el-input), .admin-filter :deep(.el-select) { width: 100%; }
+  .table-frame-heading { padding-inline: 14px; }
+  .pagination { justify-content: flex-start; overflow-x: auto; padding-inline: 14px; }
 }
 </style>

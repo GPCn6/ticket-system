@@ -16,6 +16,7 @@ D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\util\StringUtils.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\config\WebConfig.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\result\PageResult.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\security\InternalAuth.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\constant\ShowStatus.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\config\JacksonConfig.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-common\src\main\java\com\jsu\common\constant\RedisKey.java

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jsu.entity.Order;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * 订单 Mapper 接口
@@ -53,4 +54,9 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @return 过期订单列表
      */
     List<Order> selectExpiredOrders();
+
+    int cancelPending(@Param("id") Long id, @Param("cancelled") Integer cancelled, @Param("pending") Integer pending);
+
+    int payPending(@Param("orderNo") String orderNo, @Param("paid") Integer paid,
+                   @Param("pending") Integer pending, @Param("payTime") LocalDateTime payTime);
 }

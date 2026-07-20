@@ -1,145 +1,29 @@
 <template>
-  <div class="search">
-    <div class="container">
-      <div class="search-header">
-        <h1 class="search-title">搜索结果��</h1>
-        <div class="search-box">
-          <input 
-            type="text" 
-            v-model="keyword" 
-            placeholder="请输入演出名称或关键词"
-            @keyup.enter="search"
-          >
-          <button class="search-btn" @click="search">搜索</button>
-        </div>
-      </div>
-      <div v-if="loading" class="loading">加载中...</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else class="search-results">
-        <div v-if="shows.length === 0" class="empty">暂无搜索结果果��</div>
-        <div class="show-list">
-          <div class="show-item" v-for="show in shows" :key="show.id" @click="goToDetail(show.id)">
-            <img :src="show.poster" :alt="show.name" class="show-poster">
-            <div class="show-info">
-              <h3>{{ show.name }}</h3>
-              <p class="show-description">{{ show.description }}</p>
-              <div class="show-meta">
-                <span class="meta-item">城市: {{ show.city }}</span>
-                <span class="meta-item">场馆: {{ show.venue }}</span>
-                <span class="meta-item">时间: {{ formatTime(show.startTime) }}</span>
-              </div>
-              <button class="detail-btn" @click.stop="goToDetail(show.id)">查看详情</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="page-shell search-page">
+    <header class="search-heading"><span>搜索演出</span><h1>{{ currentKeyword ? `“${currentKeyword}”` : '找到你的下一场现场' }}</h1><form @submit.prevent="search"><input v-model="keyword" aria-label="搜索关键词" placeholder="输入演出、艺人或场馆" /><button type="submit" aria-label="搜索"><el-icon><Search /></el-icon></button></form></header>
+    <div class="result-meta"><strong>{{ loading ? '正在查找' : `${shows.length} 个结果` }}</strong><router-link to="/">返回发现</router-link></div>
+    <div v-if="loading" class="result-list"><div v-for="n in 4" :key="n" class="result-skeleton"><span class="skeleton"/><div><i class="skeleton"/><i class="skeleton short"/></div></div></div>
+    <div v-else-if="error" class="state-block"><div><h2>搜索暂时不可用</h2><p>{{ error }}</p><button class="ui-button" type="button" @click="loadSearchResults">重新搜索</button></div></div>
+    <div v-else-if="!shows.length" class="state-block"><div><h2>没有找到匹配演出</h2><p>尝试缩短关键词，或按演出类型浏览。</p><router-link class="ui-button ui-button--primary" to="/">浏览近期演出</router-link></div></div>
+    <div v-else class="result-list">
+      <article v-for="show in shows" :key="show.id" class="result-row" @click="goToDetail(show.id)">
+        <img :src="show.poster" :alt="show.name" /><div class="result-date"><strong>{{ day(show.startTime) }}</strong><span>{{ month(show.startTime) }}</span></div>
+        <div class="result-copy"><span>{{ show.category || '现场演出' }}</span><h2>{{ show.name }}</h2><p>{{ show.city }} · {{ show.venue }}</p><small>{{ show.description }}</small></div>
+        <button class="ui-icon-button" type="button" title="查看详情"><el-icon><ArrowRight /></el-icon></button>
+      </article>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { showApi } from '../../api/show';
-import dayjs from 'dayjs';
-
-const router = useRouter();
-const route = useRoute();
-
-const keyword = ref('');
-const shows = ref([]);
-const loading = ref(true);
-const error = ref('');
-
-const loadSearchResults = async () => {
-  try {
-    loading.value = true;
-    error.value = '';
-    const searchKeyword = route.query.keyword;
-    if (searchKeyword) {
-      keyword.value = searchKeyword;
-      const res = await showApi.searchShows(searchKeyword);
-      shows.value = res.code === 200 && res.data ? res.data : [];
-    }
-  } catch (err) {
-    error.value = '搜索失败，请重试';
-    console.error(err);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const search = () => {
-  if (keyword.value) {
-    router.push({ name: 'Search', query: { keyword: keyword.value } });
-  }
-};
-
-const formatTime = (time) => {
-  return dayjs(time).format('YYYY-MM-DD HH:mm');
-};
-
-const goToDetail = (showId) => {
-  router.push({ name: 'ShowDetail', params: { id: showId } });
-};
-
-onMounted(() => {
-  loadSearchResults();
-});
+import { computed, onMounted, ref, watch } from 'vue'; import { useRoute,useRouter } from 'vue-router'; import { ArrowRight,Search } from '@element-plus/icons-vue'; import dayjs from 'dayjs'; import { showApi } from '../../api/show';
+const router=useRouter(),route=useRoute(); const keyword=ref(''),shows=ref([]),loading=ref(true),error=ref(''); const currentKeyword=computed(()=>typeof route.query.keyword==='string'?route.query.keyword:'');
+const loadSearchResults=async()=>{try{loading.value=true;error.value='';keyword.value=currentKeyword.value;if(!currentKeyword.value){shows.value=[];return;}const res=await showApi.searchShows(currentKeyword.value);if(res.code!==200)throw new Error(res.message);shows.value=res.data||[];}catch(err){error.value=err.message||'请稍后再试';}finally{loading.value=false;}};
+const search=()=>{const value=keyword.value.trim();if(value)router.push({name:'Search',query:{keyword:value}});}; const day=(time)=>dayjs(time).format('DD'); const month=(time)=>dayjs(time).format('MM月'); const goToDetail=(id)=>router.push({name:'ShowDetail',params:{id}});
+onMounted(loadSearchResults);watch(()=>route.query.keyword,loadSearchResults);
 </script>
 
 <style scoped>
-.search {
-  padding: 20px 0;
-}
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-.search-header { margin-bottom: 30px; }
-.search-title { font-size: 24px; margin-bottom: 20px; color: #333; }
-.search-box { display: flex; max-width: 600px; }
-.search-box input {
-  flex: 1; padding: 10px; border: 1px solid #d9d9d9;
-  border-radius: 4px 0 0 4px; font-size: 16px;
-  transition: border-color 0.3s;
-}
-.search-box input:focus { outline: none; border-color: #1890ff; }
-.search-btn {
-  padding: 0 20px; background: #1890ff; color: white; border: none;
-  border-radius: 0 4px 4px 0; cursor: pointer; font-size: 16px;
-  transition: background 0.3s;
-}
-.search-btn:hover { background: #40a9ff; }
-.loading, .error, .empty { text-align: center; padding: 100px 0; font-size: 18px; }
-.error { color: #ff4d4f; }
-.show-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 20px;
-}
-.show-item {
-  display: flex; background: #f5f5f5; padding: 20px;
-  border-radius: 8px; cursor: pointer;
-  transition: transform 0.3s;
-}
-.show-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-.show-poster {
-  width: 120px; height: 160px; object-fit: cover;
-  border-radius: 8px; margin-right: 20px;
-}
-.show-info { flex: 1; }
-.show-info h3 { font-size: 18px; margin-bottom: 10px; color: #333; }
-.show-description {
-  font-size: 14px; line-height: 1.4; margin-bottom: 15px; color: #666;
-  overflow: hidden; text-overflow: ellipsis;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
-}
-.show-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #999; margin-bottom: 15px; }
-.detail-btn { padding: 8px 16px; background: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-.detail-btn:hover { background: #40a9ff; }
+.search-heading>span{color:var(--brand);font-size:12px;font-weight:800}.search-heading h1{margin:8px 0 24px;font-size:clamp(30px,5vw,48px)}.search-heading form{max-width:720px;height:52px;display:flex;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--surface)}.search-heading input{min-width:0;flex:1;padding:0 16px;border:0;outline:0;background:transparent;font-size:16px}.search-heading button{width:52px;border:0;color:#fff;background:var(--ink);cursor:pointer}.result-meta{display:flex;justify-content:space-between;margin:38px 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line)}.result-meta a{color:var(--brand);font-weight:700}.result-row{min-height:172px;display:grid;grid-template-columns:128px 58px 1fr 40px;align-items:center;gap:22px;padding:18px 0;border-bottom:1px solid var(--line);cursor:pointer}.result-row>img{width:128px;height:136px;object-fit:cover;border-radius:var(--radius)}.result-date strong,.result-date span{display:block}.result-date strong{font-size:28px}.result-date span,.result-copy>span{color:var(--brand);font-size:12px;font-weight:800}.result-copy h2{margin:5px 0 8px;font-size:20px}.result-copy p{color:var(--ink-2)}.result-copy small{display:-webkit-box;max-width:70ch;margin-top:8px;color:var(--ink-3);overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical}.result-skeleton{display:grid;grid-template-columns:128px 1fr;gap:22px;padding:18px 0;border-bottom:1px solid var(--line)}.result-skeleton>span{height:136px;border-radius:var(--radius)}.result-skeleton div{padding-top:24px}.result-skeleton i{display:block;width:60%;height:18px;margin-bottom:14px}.result-skeleton .short{width:35%}
+@media(max-width:650px){.result-row{grid-template-columns:88px 1fr 40px;gap:14px}.result-row>img{width:88px;height:118px}.result-date{display:none}.result-copy small{display:none}.result-copy h2{font-size:17px}.result-skeleton{grid-template-columns:88px 1fr}.result-skeleton>span{height:118px}}
 </style>

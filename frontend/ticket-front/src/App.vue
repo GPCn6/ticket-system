@@ -1,14 +1,13 @@
 <template>
-  <div class="app">
-    <!-- 头部导航 -->
+  <div class="app-shell">
     <Header />
-    
-    <!-- 主内容区域 -->
-    <main class="main-content">
-      <router-view />
+    <main class="app-main">
+      <router-view v-slot="{ Component }">
+        <transition name="route-fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
-    
-    <!-- 底部信息 -->
     <Footer />
   </div>
 </template>
@@ -19,17 +18,10 @@ import Footer from './components/Footer.vue';
 </script>
 
 <style>
-/* 引入全局样式 */
 @import './assets/styles/main.css';
-
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px 0;
-}
+.app-shell { min-height: 100dvh; display: flex; flex-direction: column; }
+.app-main { flex: 1; min-width: 0; }
+.route-fade-enter-active, .route-fade-leave-active { transition: opacity 140ms ease, transform 140ms ease; }
+.route-fade-enter-from { opacity: 0; transform: translateY(4px); }
+.route-fade-leave-to { opacity: 0; }
 </style>

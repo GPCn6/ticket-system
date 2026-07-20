@@ -95,10 +95,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 计算订单金额
-        if (order.getTotalAmount() == null || order.getTotalAmount().signum() <= 0) {
-            if (ticket != null && ticket.getPrice() != null) {
-                order.setTotalAmount(ticket.getPrice().multiply(BigDecimal.valueOf(order.getQuantity())));
-            }
+        if (ticket.getPrice() != null) {
+            order.setTotalAmount(ticket.getPrice().multiply(BigDecimal.valueOf(order.getQuantity())));
         }
         if (order.getTotalAmount() == null) {
             throw new BusinessException("无法计算订单金额，请检查票档与数量");
@@ -157,13 +155,11 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() != OrderStatus.PENDING.getCode()) {
             return false;
         }
-        order.setStatus(OrderStatus.CANCELLED.getCode());
-        int updated = orderMapper.updateById(order);
+        int updated = orderMapper.cancelPending(id, OrderStatus.CANCELLED.getCode(), OrderStatus.PENDING.getCode());
         if (updated > 0) {
-            // 同步恢复库存
-            ticketService.restoreStock(order.getTicketId(), order.getQuantity());
+            return true;
         }
-        return updated > 0;
+        return false;
     }
 
     /**
@@ -186,8 +182,6 @@ public class OrderServiceImpl implements OrderService {
         if (order.getExpireTime() != null && order.getExpireTime().isBefore(LocalDateTime.now())) {
             throw new BusinessException("订单已过期，请重新下单");
         }
-        order.setStatus(OrderStatus.PAID.getCode());
-        order.setPayTime(LocalDateTime.now());
-        return orderMapper.updateById(order) > 0;
+        return orderMapper.payPending(orderNo, OrderStatus.PAID.getCode(), OrderStatus.PENDING.getCode(), LocalDateTime.now()) > 0;
     }
 }

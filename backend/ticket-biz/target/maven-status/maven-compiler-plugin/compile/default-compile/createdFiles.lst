@@ -11,6 +11,7 @@ com\jsu\service\Impl\TicketServiceImpl.class
 com\jsu\config\DatabaseInitializer.class
 com\jsu\mapper\OrderMapper.class
 com\jsu\service\SeckillService.class
+com\jsu\config\InternalAuthInterceptor.class
 com\jsu\mapper\ShowMapper.class
 com\jsu\task\OrderCancelScheduler.class
 com\jsu\mq\producer\MessageProducer.class
@@ -21,6 +22,7 @@ com\jsu\mapper\SeckillSessionMapper.class
 com\jsu\TickerBizApplication.class
 com\jsu\entity\Ticket.class
 com\jsu\mq\producer\MessageProducer$StockRestoreMessage.class
+com\jsu\config\InternalAuthWebConfig.class
 com\jsu\dto\PayOrderRequest.class
 com\jsu\entity\SeckillSession.class
 com\jsu\config\MyMetaObjectHandler.class

@@ -1,9 +1,13 @@
-D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\config\UserWebSecurityConfig.java
-D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\TicketUserApplication.java
-D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\service\UserService.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\dto\UpdateUserRequest.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\controller\UserController.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\dto\ResetPasswordRequest.java
-D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\service\Impl\UserServiceImpl.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\dto\LoginRequest.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\mapper\UserMapper.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\config\JackSonConfig.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\config\InternalAuthInterceptor.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\dto\RegisterRequest.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\config\UserWebSecurityConfig.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\TicketUserApplication.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\service\UserService.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\service\Impl\UserServiceImpl.java
+D:\idea-java\jsu-java\ticket-system\backend\ticket-user\src\main\java\com\jsu\config\InternalAuthWebConfig.java

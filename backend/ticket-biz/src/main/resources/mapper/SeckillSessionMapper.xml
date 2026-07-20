@@ -54,7 +54,7 @@
     <update id="restoreStock">
         UPDATE biz_seckill_session
         SET stock = stock + #{quantity}
-        WHERE id = #{sessionId}
+        WHERE id = #{sessionId} AND #{quantity} > 0
     </update>
 
 </mapper>

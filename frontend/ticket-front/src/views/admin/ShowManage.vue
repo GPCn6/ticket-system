@@ -1,21 +1,23 @@
 <template>
-  <div class="show-manage">
-    <div class="page-header">
-      <div class="header-left">
-        <el-button @click="goBack">
-          <el-icon><ArrowLeft /></el-icon>
-          返回
-        </el-button>
-        <h2>演出管理</h2>
+  <main class="page-shell admin-page show-manage">
+    <header class="admin-page-heading">
+      <div class="admin-title-group">
+        <el-tooltip content="返回运营总览" placement="bottom">
+          <el-button class="back-button" :icon="ArrowLeft" circle aria-label="返回运营总览" @click="goBack" />
+        </el-tooltip>
+        <div>
+          <p class="admin-eyebrow">CONTENT CATALOG</p>
+          <h1>演出管理</h1>
+          <p>维护演出信息、上架状态与票档配置入口。</p>
+        </div>
       </div>
       <el-button type="primary" @click="handleCreate">
         <el-icon><Plus /></el-icon>
         添加演出
       </el-button>
-    </div>
+    </header>
 
-    <!-- 搜索筛选 -->
-    <el-card class="filter-card">
+    <section class="admin-filter" aria-label="演出筛选">
       <el-form :inline="true" :model="searchForm">
         <el-form-item label="演出名称">
           <el-input v-model="searchForm.name" placeholder="请输入演出名称" clearable />
@@ -41,10 +43,15 @@
           <el-button @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
-    </el-card>
+    </section>
 
-    <!-- 数据表格 -->
-    <el-card class="table-card">
+    <section class="table-frame">
+      <div class="table-frame-heading">
+        <div>
+          <h2>演出目录</h2>
+          <span>共 {{ pagination.total }} 场演出</span>
+        </div>
+      </div>
       <el-table :data="tableData" v-loading="loading" stripe>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="name" label="演出名称" min-width="180" />
@@ -82,7 +89,7 @@
         @size-change="loadData"
         @current-change="loadData"
       />
-    </el-card>
+    </section>
 
     <!-- 编辑对话框 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="700px" destroy-on-close>
@@ -138,7 +145,7 @@
         <el-button type="primary" @click="handleSubmit" :loading="submitting">确定</el-button>
       </template>
     </el-dialog>
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -303,40 +310,30 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.show-manage {
-  padding: 20px;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.page-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.filter-card {
-  margin-bottom: 20px;
-}
-
-.table-card {
-  margin-bottom: 20px;
-}
-
-.pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
+.admin-page { padding-block: 32px 56px; }
+.admin-page-heading, .admin-title-group, .table-frame-heading, .admin-filter :deep(.el-form) { display: flex; align-items: center; }
+.admin-page-heading { justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+.admin-title-group { gap: 12px; min-width: 0; }
+.admin-eyebrow { margin: 0 0 4px; color: var(--ink-3); font-size: 11px; font-weight: 750; letter-spacing: .08em; }
+.admin-title-group h1 { margin: 0; font-size: 26px; font-weight: 760; }
+.admin-title-group p:not(.admin-eyebrow) { margin: 5px 0 0; color: var(--ink-2); font-size: 13px; }
+.back-button { flex: 0 0 auto; }
+.admin-filter { padding: 16px 0; margin-bottom: 18px; border-block: 1px solid var(--line); }
+.admin-filter :deep(.el-form) { flex-wrap: wrap; gap: 8px 12px; }
+.admin-filter :deep(.el-form-item) { margin: 0; }
+.admin-filter :deep(.el-input), .admin-filter :deep(.el-select) { width: 190px; }
+.table-frame { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.table-frame-heading { justify-content: space-between; min-height: 58px; padding: 0 18px; border-bottom: 1px solid var(--line); }
+.table-frame-heading h2 { margin: 0; font-size: 15px; font-weight: 720; }
+.table-frame-heading span { margin-left: 10px; color: var(--ink-3); font-size: 12px; }
+.table-frame :deep(.el-table) { --el-table-border-color: var(--line); }
+.pagination { display: flex; justify-content: flex-end; padding: 16px 18px; margin: 0; border-top: 1px solid var(--line); }
+@media (max-width: 768px) {
+  .admin-page-heading { align-items: flex-start; flex-direction: column; }
+  .admin-page-heading > .el-button { width: 100%; }
+  .admin-filter :deep(.el-form) { display: grid; grid-template-columns: 1fr; }
+  .admin-filter :deep(.el-form-item), .admin-filter :deep(.el-input), .admin-filter :deep(.el-select) { width: 100%; }
+  .table-frame-heading { padding-inline: 14px; }
+  .pagination { justify-content: flex-start; overflow-x: auto; padding-inline: 14px; }
 }
 </style>

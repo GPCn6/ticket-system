@@ -5,6 +5,16 @@
 
 <mapper namespace="com.jsu.mapper.OrderMapper">
 
+    <update id="cancelPending">
+        UPDATE biz_order SET status = #{cancelled}
+        WHERE id = #{id} AND status = #{pending}
+    </update>
+
+    <update id="payPending">
+        UPDATE biz_order SET status = #{paid}, pay_time = #{payTime}
+        WHERE order_no = #{orderNo} AND status = #{pending}
+    </update>
+
     <select id="selectUserOrders" resultType="com.jsu.entity.Order">
         SELECT o.*,
         s.name as showName,

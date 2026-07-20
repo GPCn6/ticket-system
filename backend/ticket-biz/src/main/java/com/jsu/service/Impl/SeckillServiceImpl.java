@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 秒杀服务实现类
@@ -136,6 +137,9 @@ public class SeckillServiceImpl implements SeckillService {
     @Override
     public Result<?> seckill(Long sessionId, Long userId, int quantity) {
         try {
+            if (sessionId == null || userId == null || quantity < 1 || quantity > 2) {
+                return Result.fail("请求参数无效");
+            }
             SeckillSession session = seckillSessionMapper.selectById(sessionId);
             if (session == null) {
                 return Result.fail(ResultCode.NOT_FOUND);
@@ -202,7 +206,7 @@ public class SeckillServiceImpl implements SeckillService {
                 log.info("发送秒杀订单消息: userId={}, showId={}, ticketId={}, quantity={}",
                         userId, session.getShowId(), session.getTicketId(), quantity);
                 messageProducer.sendOrderCreateMessage(order);
-                return Result.success("抢购成功，正在处理订单");
+                return Result.success(Map.of("requestId", order.getOrderNo(), "status", "ACCEPTED"));
             } finally {
                 stringRedisTemplate.delete(lockKey);
             }

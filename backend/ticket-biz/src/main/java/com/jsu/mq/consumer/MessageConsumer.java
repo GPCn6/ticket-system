@@ -101,16 +101,7 @@ public class MessageConsumer {
             }
 
             if (latestOrder.getStatus() == OrderStatus.CANCELLED.getCode()) {
-                log.info("订单已被取消，直接发送库存恢复消息: orderId={}", order.getId());
-                boolean isSeckillOrder = latestOrder.getIsSeckill() != null && latestOrder.getIsSeckill() == 1;
-                messageProducer.sendStockRestoreMessage(
-                        latestOrder.getSessionId(),
-                        latestOrder.getTicketId(),
-                        latestOrder.getQuantity(),
-                        latestOrder.getOrderNo(),
-                        latestOrder.getUserId(),
-                        isSeckillOrder
-                );
+                log.info("订单已被取消，幂等确认: orderId={}", order.getId());
                 channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
                 return;
             }

@@ -3,18 +3,15 @@ package com.jsu.controller;
 import com.jsu.common.entity.User;
 import com.jsu.common.result.Result;
 import com.jsu.dto.LoginRequest;
+import com.jsu.dto.RegisterRequest;
 import com.jsu.dto.ResetPasswordRequest;
+import com.jsu.dto.UpdateUserRequest;
 import com.jsu.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-/**
- * 用户管理Controller
- */
 @RestController
 @RequestMapping("/api/user")
 @Tag(name = "用户管理")
@@ -29,38 +26,38 @@ public class UserController {
     @PostMapping("/login")
     @Operation(summary = "用户登录")
     public Result<User> login(@RequestBody LoginRequest request) {
-        User user = userService.login(request.getUsername(), request.getPassword());
-        return Result.success(user);
-    }
-
-    @PostMapping("/login-debug")
-    @Operation(summary = "调试登录")
-    public Result<Map<String, String>> loginDebug(@RequestBody Map<String, String> body) {
-        return Result.success(body);
+        return Result.success(userService.login(request.getUsername(), request.getPassword()));
     }
 
     @PostMapping("/register")
     @Operation(summary = "用户注册")
-    public Result<User> register(@RequestBody User user) {
-        user = userService.register(user);
-        return Result.success(user);
+    public Result<User> register(@RequestBody RegisterRequest request) {
+        User user = new User();
+        user.setUsername(request.username());
+        user.setPassword(request.password());
+        user.setNickname(request.nickname());
+        user.setPhone(request.phone());
+        user.setEmail(request.email());
+        return Result.success(userService.register(user));
     }
 
     @GetMapping("/info")
     @Operation(summary = "获取用户信息")
     public Result<User> getUserInfo(HttpServletRequest request) {
-        String token = extractBearer(request);
-        Long userId = userService.verifyToken(token);
-        User user = userService.getById(userId);
-        return Result.success(user);
+        Long userId = userService.verifyToken(extractBearer(request));
+        return Result.success(userService.getById(userId));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新用户信息")
-    public Result<Void> updateUser(@RequestBody User user, HttpServletRequest request) {
-        String token = extractBearer(request);
-        Long userId = userService.verifyToken(token);
+    public Result<Void> updateUser(@RequestBody UpdateUserRequest request, HttpServletRequest httpRequest) {
+        Long userId = userService.verifyToken(extractBearer(httpRequest));
+        User user = new User();
         user.setId(userId);
+        user.setNickname(request.nickname());
+        user.setPhone(request.phone());
+        user.setEmail(request.email());
+        user.setAvatar(request.avatar());
         userService.update(user);
         return Result.success();
     }
@@ -71,29 +68,20 @@ public class UserController {
         String token = extractBearer(httpRequest);
         Long userId = userService.verifyToken(token);
         userService.resetPassword(userId, request.getNewPassword());
-        // 重置密码后强制登出：使当前 Token 失效
         userService.invalidateToken(token);
         return Result.success();
     }
 
-    /**
-     * 登出接口：将当前 Token 加入 Redis 黑名单
-     */
     @PostMapping("/logout")
     @Operation(summary = "用户登出")
     public Result<Void> logout(HttpServletRequest request) {
         String token = extractBearer(request);
-        if (token != null) {
-            userService.invalidateToken(token);
-        }
+        if (token != null) userService.invalidateToken(token);
         return Result.success();
     }
 
     private static String extractBearer(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7);
-        }
-        return token;
+        return token != null && token.startsWith("Bearer ") ? token.substring(7) : token;
     }
 }

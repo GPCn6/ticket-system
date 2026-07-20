@@ -49,6 +49,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public boolean deductStock(Long ticketId, int quantity) {
+        if (ticketId == null || quantity <= 0) return false;
         int updated = ticketMapper.deductStock(ticketId, quantity);
         return updated > 0;
     }
@@ -64,6 +65,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public boolean restoreStock(Long ticketId, int quantity) {
+        if (ticketId == null || quantity <= 0) return false;
         int updated = ticketMapper.restoreStock(ticketId, quantity);
         return updated > 0;
     }
