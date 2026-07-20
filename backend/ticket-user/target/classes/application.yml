@@ -7,9 +7,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false}
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
     username: ${MYSQL_USER:root}
-    password: ${MYSQL_PASSWORD:}
+    password: ${MYSQL_PASSWORD:1234}
 
   data:
     redis:
@@ -28,13 +28,9 @@ mybatis-plus:
   mapper-locations: classpath*:/UserMapper.xml
 
 jwt:
-  secret: ${JWT_SECRET:}
+  secret: ${JWT_SECRET:ticket-system-dev-jwt-secret-ticket-system-dev-jwt-secret}
   expiration: ${JWT_EXPIRATION:7200000}
 
 logging:
   level:
-    com.ticket: ${LOG_LEVEL:debug}
-
-internal:
-  auth:
-    secret: ${GATEWAY_AUTH_SECRET}
+    com.jsu: ${LOG_LEVEL:debug}

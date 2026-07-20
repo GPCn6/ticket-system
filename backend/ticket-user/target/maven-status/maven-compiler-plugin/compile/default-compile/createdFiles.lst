@@ -4,10 +4,8 @@ com\jsu\dto\LoginRequest.class
 com\jsu\controller\UserController.class
 com\jsu\service\Impl\UserServiceImpl.class
 com\jsu\service\UserService.class
-com\jsu\config\InternalAuthWebConfig.class
 com\jsu\TicketUserApplication.class
 com\jsu\dto\ResetPasswordRequest.class
 com\jsu\dto\UpdateUserRequest.class
-com\jsu\config\InternalAuthInterceptor.class
 com\jsu\mapper\UserMapper.class
 com\jsu\dto\RegisterRequest.class

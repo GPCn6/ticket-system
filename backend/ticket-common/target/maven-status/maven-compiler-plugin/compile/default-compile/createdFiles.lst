@@ -3,7 +3,6 @@ com\jsu\common\constant\OrderStatus.class
 com\jsu\common\config\RabbitMQConfig.class
 com\jsu\common\result\ResultCode.class
 com\jsu\common\config\SwaggerConfig.class
-com\jsu\common\security\InternalAuth.class
 com\jsu\common\exception\BaseException.class
 com\jsu\common\filter\CorsFilter.class
 com\jsu\common\constant\ShowStatus.class

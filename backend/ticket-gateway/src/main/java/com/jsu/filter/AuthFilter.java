@@ -3,16 +3,15 @@ package com.jsu.filter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import com.jsu.common.security.InternalAuth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -21,31 +20,20 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-/**
- * 网关认证过滤器
- *
- * 功能：
- * 1. JWT Token 验证（密钥从配置读取）
- * 2. Token 黑名单校验（Redis 校验，支持登出即失效）
- * 3. 用户身份提取（userId、role）
- * 4. 权限校验（区分普通用户和管理员接口）
- */
 @Component
 public class AuthFilter implements GlobalFilter, Ordered {
 
-    /** Token 黑名单 Redis Key 前缀 */
     private static final String TOKEN_BLACKLIST_PREFIX = "token:blacklist:";
+    private static final String USER_ID_HEADER = "X-User-Id";
+    private static final String USER_ROLE_HEADER = "X-User-Role";
 
     private final String jwtSecret;
     private final ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
-    private final String internalAuthSecret;
 
     public AuthFilter(
             @Value("${jwt.secret}") String jwtSecret,
-            @Value("${internal.auth.secret}") String internalAuthSecret,
             ReactiveRedisTemplate<String, Object> reactiveRedisTemplate) {
         this.jwtSecret = jwtSecret;
-        this.internalAuthSecret = internalAuthSecret;
         this.reactiveRedisTemplate = reactiveRedisTemplate;
     }
 
@@ -55,12 +43,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
         String method = exchange.getRequest().getMethod() == null
                 ? "" : exchange.getRequest().getMethod().name().toUpperCase(Locale.ROOT);
 
-        // 放行公开接口
         if (isPublicEndpoint(path, method)) {
-            return forwardWithInternalAuth(exchange, chain, null, null);
+            return chain.filter(exchange);
         }
 
-        // 提取 Token
         String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (token == null || !token.startsWith("Bearer ")) {
             return unauthorized(exchange);
@@ -78,20 +64,17 @@ public class AuthFilter implements GlobalFilter, Ordered {
             String tokenId = claims.get("tokenId", String.class);
             String userId = claims.getSubject();
             String role = claims.get("role", String.class);
-
-            // Token 黑名单校验（异步 Redis 查询）
             String blacklistKey = TOKEN_BLACKLIST_PREFIX + tokenId;
+
             return reactiveRedisTemplate.hasKey(blacklistKey)
                     .flatMap(isBlacklisted -> {
                         if (Boolean.TRUE.equals(isBlacklisted)) {
                             return unauthorized(exchange);
                         }
-                        // 管理员接口权限校验
                         if (isAdminEndpoint(path, method) && !"admin".equalsIgnoreCase(role)) {
                             return forbidden(exchange);
                         }
-                        // 注入用户信息到请求头
-                        return forwardWithInternalAuth(exchange, chain, userId, role);
+                        return forwardWithUserHeaders(exchange, chain, userId, role);
                     });
         } catch (Exception e) {
             return unauthorized(exchange);
@@ -101,7 +84,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     private Mono<Void> unauthorized(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        String message = "{\"code\": 401, \"message\": \"未授权\"}";
+        String message = "{\"code\": 401, \"message\": \"unauthorized\"}";
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(message.getBytes(StandardCharsets.UTF_8));
         return exchange.getResponse().writeWith(Mono.just(buffer));
     }
@@ -109,39 +92,33 @@ public class AuthFilter implements GlobalFilter, Ordered {
     private Mono<Void> forbidden(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        String message = "{\"code\": 403, \"message\": \"无权限访问\"}";
+        String message = "{\"code\": 403, \"message\": \"forbidden\"}";
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(message.getBytes(StandardCharsets.UTF_8));
         return exchange.getResponse().writeWith(Mono.just(buffer));
     }
 
     private boolean isPublicEndpoint(String path, String method) {
-        if ("/api/user/login".equals(path) || "/api/user/register".equals(path)
-                ) {
+        if ("/api/user/login".equals(path) || "/api/user/register".equals(path)) {
             return true;
         }
         if ("GET".equals(method) && (path.startsWith("/api/show/") || path.startsWith("/api/ticket/"))) {
             return true;
         }
-        if ("GET".equals(method) && ("/api/seckill/active".equals(path)
+        return "GET".equals(method) && ("/api/seckill/active".equals(path)
                 || "/api/seckill/upcoming".equals(path)
-                || path.startsWith("/api/seckill/detail/"))) {
-            return true;
-        }
-        return false;
+                || path.startsWith("/api/seckill/detail/"));
     }
 
-    private Mono<Void> forwardWithInternalAuth(ServerWebExchange exchange, GatewayFilterChain chain,
-                                                String userId, String role) {
+    private Mono<Void> forwardWithUserHeaders(ServerWebExchange exchange, GatewayFilterChain chain,
+                                              String userId, String role) {
         var requestBuilder = exchange.getRequest().mutate()
                 .headers(headers -> {
-                    headers.remove(InternalAuth.HEADER);
-                    headers.remove(InternalAuth.USER_ID_HEADER);
-                    headers.remove(InternalAuth.USER_ROLE_HEADER);
-                })
-                .header(InternalAuth.HEADER, internalAuthSecret);
+                    headers.remove(USER_ID_HEADER);
+                    headers.remove(USER_ROLE_HEADER);
+                });
         if (userId != null) {
-            requestBuilder.header(InternalAuth.USER_ID_HEADER, userId);
-            requestBuilder.header(InternalAuth.USER_ROLE_HEADER, role == null ? "user" : role);
+            requestBuilder.header(USER_ID_HEADER, userId);
+            requestBuilder.header(USER_ROLE_HEADER, role == null ? "user" : role);
         }
         return chain.filter(exchange.mutate().request(requestBuilder.build()).build());
     }

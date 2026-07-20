@@ -1,5 +1,5 @@
 ﻿jwt:
-  secret: ${JWT_SECRET:}
+  secret: ${JWT_SECRET:ticket-system-dev-jwt-secret-ticket-system-dev-jwt-secret}
 
 server:
   port: 8080
@@ -56,7 +56,3 @@ spring:
 logging:
   level:
     org.springframework.cloud.gateway: info
-
-internal:
-  auth:
-    secret: ${GATEWAY_AUTH_SECRET}

@@ -2,7 +2,6 @@ D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\con
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\service\Impl\TicketServiceImpl.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\dto\SeckillExecuteRequest.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\service\ShowService.java
-D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\config\InternalAuthInterceptor.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\controller\DataResetController.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\entity\Order.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\service\OrderService.java
@@ -20,7 +19,6 @@ D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\con
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\controller\SeckillController.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\service\Impl\SeckillServiceImpl.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\config\MyBatisPlusConfig.java
-D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\config\InternalAuthWebConfig.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\mapper\ShowMapper.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\controller\OrderController.java
 D:\idea-java\jsu-java\ticket-system\backend\ticket-biz\src\main\java\com\jsu\dto\PayOrderRequest.java
